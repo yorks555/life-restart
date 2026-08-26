@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>八字排盘</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html">🔄 重开人生</a>
+    <a href="fortune.html">🔮 今日运势</a>
+    <a href="bazi.html" class="active">🧧 八字排盘</a>
+    <a href="pixel-town.html">🏘️ 像素小镇</a>
+  </nav>
+
+  <div class="container">
+    <h1 class="title">八字排盘</h1>
+    <p class="subtitle">输入出生日期与时辰，排出你的四柱八字（年 / 月 / 日 / 时柱）。纯属娱乐，命理仅供参考 😄</p>
+
+    <!-- 输入区 -->
+    <div class="card" style="text-align:center">
+      <div class="form-row">
+        <input id="birthDate" type="date">
+        <input id="birthTime" type="time">
+        <button class="btn" onclick="paiPan()">🧧 排八字</button>
+      </div>
+      <p class="muted" style="margin-top:10px">时辰可留空（留空则只排年 / 月 / 日三柱）</p>
+    </div>
+
+    <!-- 结果区（初始隐藏） -->
+    <div class="card" id="resultBox" style="display:none; text-align:center">
+      <h2 id="bTitle">你的八字</h2>
+      <p class="fortune-date" id="bSub"></p>
+
+      <div class="bazi-grid" id="bGrid"></div>
+      <p id="bZodiac" style="margin-top:14px"></p>
+
+      <div style="margin-top:16px"><span class="muted">五行分布</span></div>
+      <div class="wuxing-row" id="bWx"></div>
+
+      <p class="bazi-note" id="bNote"></p>
+
+      <div class="btn-row">
+        <button class="btn gray" onclick="copyBazi()">📋 复制结果</button>
+      </div>
+    </div>
+
+    <footer>八字排盘 · 命理玄学，开心就好</footer>
+  </div>
+
+  <script src="js/lunar.js"></script>
+  <script>
+  let lastBazi = null;
+
+  // 排八字
+  function paiPan() {
+    const dval = document.getElementById('birthDate').value;
+    if (!dval) { alert('请先选择出生日期'); return; }
+    const parts = dval.split('-');
+    const y = +parts[0], m = +parts[1], d = +parts[2];
+    const tval = document.getElementById('birthTime').value;
+    const hour = tval ? +tval.split(':')[0] : null;
+
+    const detail = window.lunar.baziDetail(y, m, d, hour);
+    const p = detail.pillars;
+    lastBazi = { y, m, d, hour, detail };
+
+    // 农历生日 + 星期
+    const lun = window.lunar.lunarDate(y, m, d);
+    const week = ['日', '一', '二', '三', '四', '五', '六'];
+    const dow = new Date(y, m - 1, d).getDay();
+    document.getElementById('bTitle').textContent = '🧧 ' + p.year.gan + p.year.zhi + '年 出生';
+    document.getElementById('bSub').textContent =
+      y + '年' + m + '月' + d + '日 · 星期' + week[dow] +
+      ' · 农历' + lun.gan + lun.zhi + '年' + lun.monthCn + lun.dayCn +
+      (hour !== null ? ' · ' + shichenName(hour) : '');
+
+    // 四柱
+    const cells = [
+      { name: '年柱', gz: p.year.gan + p.year.zhi, wx: wxOf(p.year.gan, p.year.zhi) },
+      { name: '月柱', gz: p.month.gan + p.month.zhi, wx: wxOf(p.month.gan, p.month.zhi) },
+      { name: '日柱', gz: p.day.gan + p.day.zhi, wx: wxOf(p.day.gan, p.day.zhi) },
+      { name: '时柱', gz: p.hour ? p.hour.gan + p.hour.zhi : '--', wx: p.hour ? wxOf(p.hour.gan, p.hour.zhi) : '未填' }
+    ];
+    const grid = document.getElementById('bGrid');
+    grid.innerHTML = '';
+    for (const c of cells) {
+      const div = document.createElement('div');
+      div.className = 'bazi-cell';
+      div.innerHTML = '<div class="name">' + c.name + '</div><div class="gz">' + c.gz + '</div><div class="wx">' + c.wx + '</div>';
+      grid.appendChild(div);
+    }
+
+    document.getElementById('bZodiac').innerHTML = '🐉 生肖：' + p.zodiac;
+
+    // 五行统计
+    const wxBox = document.getElementById('bWx');
+    wxBox.innerHTML = '';
+    for (const k of ['木', '火', '土', '金', '水']) {
+      const n = detail.wuxing[k] || 0;
+      const box = document.createElement('div');
+      box.className = 'wx-box';
+      box.innerHTML = '<b>' + k + '</b><span>' + n + '</span>';
+      wxBox.appendChild(box);
+    }
+
+    document.getElementById('bNote').textContent =
+      hour === null ? '未填时辰，故只排三柱（年 / 月 / 日）' : '以上为公历排盘，命理玄学仅供娱乐';
+
+    document.getElementById('resultBox').style.display = 'block';
+    document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // 一柱的五行（天干五行 + 地支五行）
+  function wxOf(gan, zhi) {
+    const g = { 甲:'木',乙:'木',丙:'火',丁:'火',戊:'土',己:'土',庚:'金',辛:'金',壬:'水',癸:'水' }[gan] || '';
+    const z = { 子:'水',丑:'土',寅:'木',卯:'木',辰:'土',巳:'火',午:'火',未:'土',申:'金',酉:'金',戌:'土',亥:'水' }[zhi] || '';
+    return g + z;
+  }
+
+  // 时辰名（0-23 点 → 寅时等）
+  function shichenName(hour) {
+    const names = ['子时','丑时','寅时','卯时','辰时','巳时','午时','未时','申时','酉时','戌时','亥时'];
+    return names[Math.floor((hour + 1) / 2) % 12];
+  }
+
+  // 复制结果
+  function copyBazi() {
+    if (!lastBazi) return;
+    const p = lastBazi.detail.pillars;
+    const lines = [
+      '🧧 八字排盘',
+      '公历：' + lastBazi.y + '年' + lastBazi.m + '月' + lastBazi.d + '日' + (lastBazi.hour !== null ? ' ' + lastBazi.hour + '时' : ''),
+      '四柱：年 ' + p.year.gan + p.year.zhi + '　月 ' + p.month.gan + p.month.zhi + '　日 ' + p.day.gan + p.day.zhi + (p.hour ? '　时 ' + p.hour.gan + p.hour.zhi : ''),
+      '生肖：' + p.zodiac,
+      '—— 命理玄学，开心就好 😄'
+    ];
+    navigator.clipboard.writeText(lines.join('\n'))
+      .then(() => alert('✅ 八字结果已复制！'))
+      .catch(() => alert('复制失败，请手动复制：\n\n' + lines.join('\n')));
+  }
+  </script>
+</body>
+</html>

@@ -1,132 +1,166 @@
 /* ==========================================================
-   共用样式（三个页面都在用）
-   小技巧：公共样式抽到一个文件里，改一处全站生效
+   人生重开模拟器 · 象牙白主题（三页面共用）
+   配色：象牙白底 + 温暖卡片 + 橙色点缀
+   全站平涂 / 无渐变 / 统一又带点暖意
    ========================================================== */
+
+html { scroll-behavior: smooth; }
+
+/* 颜色集中在这里，改一处全站生效 */
+:root {
+  --bg: #faf6ee;              /* 象牙白背景 */
+  --surface: #ffffff;         /* 卡片面 */
+  --surface-2: #f3ecdd;       /* 次级面（内嵌区域/输入框） */
+  --border: #e8dfcc;          /* 边框 */
+  --text: #3d3527;            /* 主文字（暖深棕） */
+  --muted: #9c9077;           /* 次要文字 */
+  --accent: #e8823a;          /* 品牌橙 */
+  --accent-strong: #d8731f;   /* 橙（悬停加深） */
+  --accent-soft: rgba(232,130,58,.14);
+  --good: #4a9d5f;            /* 好事 */
+  --bad: #c74c4c;             /* 坏事 */
+  --warn: #c9962b;            /* 中等评级 */
+}
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
-  background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  background: var(--bg);
+  color: var(--text);
   min-height: 100vh;
-  color: #eee;
   padding-bottom: 40px;
 }
 
 /* ---------- 顶部导航 ---------- */
 .nav {
-  display: flex; justify-content: center; gap: 10px;
-  padding: 18px 10px; flex-wrap: wrap;
+  display: flex; justify-content: center; gap: 6px;
+  padding: 20px 12px; flex-wrap: wrap;
 }
 .nav a {
-  text-decoration: none; color: #ddd;
-  padding: 8px 18px; border-radius: 999px;
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.15);
-  transition: all .2s;
+  text-decoration: none; color: var(--muted);
+  padding: 7px 16px; border-radius: 999px; font-size: .95em;
+  transition: color .15s, background .15s;
 }
-.nav a:hover { background: rgba(255,255,255,.2); transform: translateY(-2px); }
-.nav a.active {
-  background: linear-gradient(90deg,#f7971e,#ffd200);
-  color: #222; font-weight: bold; border-color: transparent;
-}
+.nav a:hover { color: var(--text); background: var(--surface-2); }
+.nav a.active { color: var(--accent); background: var(--accent-soft); font-weight: 600; }
 
 /* ---------- 页面骨架 ---------- */
 .container { max-width: 760px; margin: 0 auto; padding: 0 16px; }
 
 h1.title {
-  text-align: center; font-size: 2.2em; margin: 16px 0 6px;
-  background: linear-gradient(90deg,#ffd200,#f7971e,#e94057);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent;
+  text-align: center; font-size: 2.2em; font-weight: 700;
+  margin: 16px 0 6px; color: var(--text); letter-spacing: .5px;
 }
-.subtitle { text-align: center; color: #aaa; margin-bottom: 22px; font-size: .95em; }
+.subtitle { text-align: center; color: var(--muted); margin-bottom: 24px; font-size: .95em; }
 
 /* ---------- 卡片 ---------- */
 .card {
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
   padding: 20px;
   margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(61,53,39,.06);
 }
-.card h2 { font-size: 1.15em; margin-bottom: 12px; }
+.card h2 { font-size: 1.05em; font-weight: 600; margin-bottom: 12px; color: var(--text); }
 
-/* ---------- 按钮 ---------- */
+/* ---------- 按钮（两种：主色 / 中性） ---------- */
 .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
 .btn {
-  display: inline-block; border: none; cursor: pointer;
-  font-size: 1em; padding: 12px 26px; border-radius: 999px;
-  color: #fff; background: linear-gradient(90deg,#e94057,#f27121);
-  transition: all .2s; box-shadow: 0 4px 15px rgba(233,64,87,.35);
-  font-family: inherit;
+  display: inline-block; border: 1px solid transparent; cursor: pointer;
+  font-size: .95em; font-weight: 600; font-family: inherit;
+  padding: 10px 22px; border-radius: 999px;
+  color: #fff; background: var(--accent);
+  transition: background .15s, transform .08s;
 }
-.btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(233,64,87,.5); }
-.btn:active { transform: translateY(0); }
-.btn.gray { background: rgba(255,255,255,.15); box-shadow: none; }
-.btn.gold { background: linear-gradient(90deg,#f7971e,#ffd200); color: #222; box-shadow: 0 4px 15px rgba(247,151,30,.4); }
+.btn:hover { background: var(--accent-strong); }
+.btn:active { transform: translateY(1px); }
+.btn.gray { color: var(--text); background: var(--surface-2); border-color: var(--border); }
+.btn.gray:hover { background: #ece2cf; }
+.btn.gold { color: #fff; background: var(--accent); border-color: transparent; }
+.btn.gold:hover { background: var(--accent-strong); }
 
 /* ---------- 出生属性 ---------- */
 .attrs { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }
-.attr { text-align: center; padding: 14px 8px; background: rgba(255,255,255,.05); border-radius: 12px; border: 1px solid rgba(255,255,255,.1); }
-.attr .emoji { font-size: 2em; display: block; }
-.attr .name { color: #bbb; font-size: .85em; margin: 4px 0 2px; }
-.attr .val { font-size: 1.5em; font-weight: bold; color: #ffd200; }
+.attr { text-align: center; padding: 16px 8px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; }
+.attr .emoji { font-size: 1.8em; display: block; margin-bottom: 6px; }
+.attr .name { color: var(--muted); font-size: .85em; margin-bottom: 4px; }
+.attr .val { font-size: 1.5em; font-weight: 700; color: var(--accent); }
 
 /* ---------- 天赋小标签 ---------- */
 .chip {
-  display: inline-block; margin: 4px 6px 0 0; padding: 6px 14px;
-  background: rgba(46,204,113,.15); border: 1px solid rgba(46,204,113,.4);
-  border-radius: 999px; font-size: .9em; color: #7ee2a8;
+  display: inline-block; margin: 4px 6px 0 0; padding: 5px 12px;
+  background: var(--accent-soft); border: 1px solid rgba(232,130,58,.4);
+  border-radius: 999px; font-size: .9em; color: var(--accent);
 }
 
 /* ---------- 人生时间线 ---------- */
 .log { list-style: none; max-height: 360px; overflow-y: auto; }
 .log li {
   padding: 9px 12px; margin-bottom: 8px; font-size: .95em;
-  border-left: 3px solid #f7971e; border-radius: 0 8px 8px 0;
-  background: rgba(255,255,255,.04);
-  animation: fadeIn .4s ease;
+  border-left: 3px solid var(--accent); background: var(--surface-2);
+  border-radius: 0 8px 8px 0;
+  animation: fadeIn .35s ease;
 }
-.log li.good { border-left-color: #2ecc71; }
-.log li.bad  { border-left-color: #e74c3c; }
+.log li.good { border-left-color: var(--good); }
+.log li.bad  { border-left-color: var(--bad); }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-/* ---------- 评分徽章 ---------- */
-.badge { display: inline-block; padding: 6px 20px; border-radius: 999px; font-size: 1.3em; font-weight: bold; color: #222; }
-.badge.S { background: linear-gradient(90deg,#ffd200,#f7971e); }
-.badge.A { background: linear-gradient(90deg,#2ecc71,#27ae60); color: #fff; }
-.badge.B { background: linear-gradient(90deg,#3498db,#2980b9); color: #fff; }
-.badge.C { background: linear-gradient(90deg,#f39c12,#e67e22); color: #fff; }
-.badge.D { background: linear-gradient(90deg,#95a5a6,#7f8c8d); color: #fff; }
+/* ---------- 评分徽章（纯色，平涂） ---------- */
+.badge { display: inline-block; padding: 6px 20px; border-radius: 999px; font-size: 1.25em; font-weight: 700; color: #fff; }
+.badge.S { background: var(--accent); }
+.badge.A { background: var(--good); }
+.badge.B { background: #4a90d9; }
+.badge.C { background: var(--warn); }
+.badge.D { background: #9aa3ad; }
 
-/* ---------- 表单（运势页用） ---------- */
+/* ---------- 表单（运势页 / 八字页用） ---------- */
 input, select {
-  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2);
-  color: #eee; padding: 10px 14px; border-radius: 10px;
-  font-size: 1em; font-family: inherit;
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text); padding: 10px 14px; border-radius: 10px;
+  font-size: .95em; font-family: inherit;
 }
-select option { background: #222; }
+input:focus, select:focus { outline: none; border-color: var(--accent); }
+select option { background: var(--surface); }
 .form-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; }
 
-/* ---------- 运势卡片 ---------- */
-.fortune-card { text-align: center; background: linear-gradient(135deg, rgba(247,151,30,.12), rgba(233,64,87,.12)); border: 1px solid rgba(255,210,0,.35); }
+/* ---------- 运势卡片（用橙色边框做区隔，保持统一） ---------- */
+.fortune-card { text-align: center; background: var(--surface); border: 1px solid rgba(232,130,58,.4); }
 .fortune-card h2 { margin-bottom: 4px; }
-.fortune-date { color: #bbb; font-size: .9em; margin-bottom: 14px; }
+.fortune-date { color: var(--muted); font-size: .9em; margin-bottom: 14px; }
 .frow { display: flex; align-items: center; gap: 10px; margin: 10px 0; text-align: left; }
-.fname { width: 64px; font-weight: bold; flex-shrink: 0; }
-.fbar { flex: 1; height: 14px; background: rgba(255,255,255,.1); border-radius: 99px; overflow: hidden; }
-.ffill { height: 100%; border-radius: 99px; background: linear-gradient(90deg,#00d2ff,#3a7bd5); }
-.fscore { width: 34px; text-align: right; font-weight: bold; color: #ffd200; }
-.fcomment { flex-basis: 100%; font-size: .85em; color: #ccc; margin-top: -4px; padding-left: 74px; }
-.lucky-list { text-align: left; margin-top: 14px; padding-top: 14px; border-top: 1px dashed rgba(255,255,255,.15); line-height: 1.9; }
-.prophecy { margin-top: 14px; font-size: 1.05em; color: #ffd2a0; background: rgba(255,255,255,.05); padding: 12px; border-radius: 10px; }
+.fname { width: 64px; font-weight: 600; flex-shrink: 0; }
+.fbar { flex: 1; height: 14px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.ffill { height: 100%; border-radius: 999px; background: var(--accent); }
+.fscore { width: 34px; text-align: right; font-weight: 700; color: var(--accent); }
+.fcomment { flex-basis: 100%; font-size: .85em; color: var(--muted); margin-top: -4px; padding-left: 74px; }
+.lucky-list { text-align: left; margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--border); line-height: 1.9; }
+.prophecy { margin-top: 14px; font-size: 1.02em; color: var(--accent); background: var(--accent-soft); padding: 12px; border-radius: 10px; }
+
+/* ---------- 今日农历卡片 ---------- */
+.lunar-card { text-align: center; }
+.lunar-gongli { color: var(--muted); font-size: .9em; margin-bottom: 8px; }
+.lunar-big { font-size: 1.6em; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+.lunar-tags { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+/* ---------- 八字页 ---------- */
+.bazi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 16px; }
+.bazi-cell { text-align: center; padding: 14px 8px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; }
+.bazi-cell .gz { font-size: 1.6em; font-weight: 700; color: var(--accent); }
+.bazi-cell .name { color: var(--muted); font-size: .85em; margin: 4px 0 2px; }
+.bazi-cell .wx { font-size: .9em; color: var(--text); }
+.wuxing-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+.wx-box { min-width: 52px; text-align: center; padding: 8px 10px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; }
+.wx-box b { display: block; font-size: 1.3em; color: var(--accent); }
+.wx-box span { font-size: .85em; color: var(--muted); }
+.bazi-note { color: var(--muted); font-size: .85em; text-align: center; margin-top: 10px; }
 
 /* ---------- 像素小镇 ---------- */
-canvas { display: block; margin: 0 auto; border-radius: 12px; border: 1px solid rgba(255,255,255,.15); background: #0b2e4f; }
+canvas { display: block; margin: 0 auto; border-radius: 10px; border: 1px solid var(--border); background: #e9e0cd; }
 .seed-box { text-align: center; margin: 12px 0; }
 .seed-box input { width: 130px; text-align: center; }
 
 /* ---------- 其他 ---------- */
-.muted { color: #999; font-size: .85em; }
-footer { text-align: center; color: #666; font-size: .8em; margin-top: 30px; }
+.muted { color: var(--muted); font-size: .85em; }
+footer { text-align: center; color: #b3a88f; font-size: .8em; margin-top: 30px; }

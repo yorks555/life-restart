@@ -10,12 +10,21 @@
   <nav class="nav">
     <a href="index.html">🔄 重开人生</a>
     <a href="fortune.html" class="active">🔮 今日运势</a>
+    <a href="bazi.html">🧧 八字排盘</a>
     <a href="pixel-town.html">🏘️ 像素小镇</a>
   </nav>
 
   <div class="container">
     <h1 class="title">今日抽象运势</h1>
     <p class="subtitle">玄学不保证准确，但保证抽象 🤪 同一天同一个你，结果固定——这就是命。</p>
+
+    <!-- 今日农历信息 -->
+    <div class="card lunar-card">
+      <h2>📅 今日农历</h2>
+      <p class="lunar-gongli" id="lunarGongli"></p>
+      <p class="lunar-big" id="lunarBig"></p>
+      <div class="lunar-tags" id="lunarTags"></div>
+    </div>
 
     <!-- 输入区 -->
     <div class="card" style="text-align:center">
@@ -56,6 +65,7 @@
     <footer>今日抽象运势 · 玄学不可信，快乐是真的</footer>
   </div>
 
+  <script src="js/lunar.js"></script>
   <script>
   // ==========================================================
   // 第一部分：文案数据（想改内容只改这里）
@@ -142,6 +152,30 @@
     return d.getFullYear() + "年" + (d.getMonth() + 1) + "月" + d.getDate() + "日";
   }
 
+  // 今天的农历字符串，例如 "农历甲辰年腊月初八"
+  function todayLunarStr() {
+    const d = new Date();
+    const L = window.lunar.lunarDate(d.getFullYear(), d.getMonth() + 1, d.getDate());
+    return "农历" + L.gan + L.zhi + "年" + L.monthCn + L.dayCn;
+  }
+
+  // 渲染"今日农历"卡片
+  function renderLunar() {
+    const d = new Date();
+    const y = d.getFullYear(), m = d.getMonth() + 1, day = d.getDate();
+    const L = window.lunar.lunarDate(y, m, day);
+    const week = ['日', '一', '二', '三', '四', '五', '六'];
+    document.getElementById('lunarGongli').textContent =
+      y + '年' + m + '月' + day + '日 · 星期' + week[d.getDay()];
+    document.getElementById('lunarBig').textContent =
+      '农历' + L.monthCn + L.dayCn + ' · ' + L.gan + L.zhi + '年';
+    document.getElementById('lunarTags').innerHTML =
+      '<span class="chip">🐉 生肖 ' + L.zodiac + '</span>' +
+      (L.term ? '<span class="chip">🍃 节气 ' + L.term + '</span>' : '');
+  }
+  // 页面一打开就显示今天的农历
+  renderLunar();
+
   // ==========================================================
   // 第三部分：抽运势 + 渲染
   // ==========================================================
@@ -182,7 +216,8 @@
 
     // 标题 + 日期
     document.getElementById("fTitle").textContent = "🔮 " + state.name + " 的今日运势（" + zodiac + "）";
-    document.getElementById("fDate").textContent = state.date + " · 综合运势 " + state.total + " 分";
+    document.getElementById("fDate").textContent =
+      todayLunarStr() + " · " + state.date + " · 综合运势 " + state.total + " 分";
 
     // 四大项进度条（HTML 是拼出来的）
     const EMOJI = { 财运: "💰", 事业: "💼", 爱情: "💘", 健康: "🏥" };
