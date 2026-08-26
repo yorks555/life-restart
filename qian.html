@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>抽签祈福</title>
+  <meta name="description" content="输入一个愿望，摇一支签，看看今天的运气。上上签、中平签、下下签——玄学娱乐，开心就好。">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html">🏠 首页</a>
+    <a href="life.html">🔄 重开人生</a>
+    <a href="fortune.html">🔮 今日运势</a>
+    <a href="bazi.html">🧧 八字排盘</a>
+    <a href="qian.html" class="active">🎋 抽签祈福</a>
+    <a href="progress.html">🪙 人生进度条</a>
+    <a href="pixel-town.html">🏘️ 像素小镇</a>
+  </nav>
+
+  <div class="container">
+    <h1 class="title">抽签祈福</h1>
+    <p class="subtitle">心里想一件事，摇一支签，看看老天怎么说。玄学娱乐，开心就好 🎋</p>
+
+    <!-- 输入区 -->
+    <div class="card" style="text-align:center">
+      <div class="form-row">
+        <input id="wishInput" type="text" placeholder="想求什么？（如：这次考试）" maxlength="30">
+        <button class="btn" onclick="drawQian()">🎋 摇签</button>
+      </div>
+      <p class="muted" style="margin-top:10px">心里默念你的愿望，再点摇签</p>
+    </div>
+
+    <!-- 结果区（初始隐藏） -->
+    <div class="card" id="resultBox" style="display:none; text-align:center">
+      <h2 id="qTitle">你的签</h2>
+      <p class="fortune-date" id="qDate"></p>
+      <p style="font-size:3.2em; margin:6px 0">🎋</p>
+      <p class="qian-level" id="qLevel"></p>
+      <p class="qian-poem" id="qPoem"></p>
+      <p class="qian-note" id="qNote"></p>
+      <div class="btn-row">
+        <button class="btn gray" onclick="copyQian()">📋 复制文案</button>
+        <button class="btn gold" onclick="downloadQian()">🖼️ 下载卡片</button>
+        <button class="btn" onclick="drawQian()">🎲 再摇一支</button>
+      </div>
+    </div>
+
+    <footer>抽签祈福 · 心诚则灵（大概）</footer>
+  </div>
+
+  <script>
+  // ==========================================================
+  // 签文数据
+  // level: 上上签 / 上吉签 / 中平签 / 下下签
+  // kind:  good / blue / amber / bad（对应颜色）
+  // ==========================================================
+  const QIAN = [
+    { level:'上上签', kind:'lv-great', poem:'春风得意马蹄疾，一日看尽长安花。', note:'好运爆棚！想什么来什么，今天大胆冲，别犹豫。' },
+    { level:'上上签', kind:'lv-great', poem:'山重水复疑无路，柳暗花明又一村。', note:'看似没戏，其实转机就在眼前，再坚持一下。' },
+    { level:'上上签', kind:'lv-great', poem:'不畏浮云遮望眼，自缘身在最高层。', note:'格局打开，烦恼都是浮云，你早就赢了大半。' },
+    { level:'上吉签', kind:'lv-good', poem:'好雨知时节，当春乃发生。', note:'时机已到，顺势而为，事半功倍。' },
+    { level:'上吉签', kind:'lv-good', poem:'随风潜入夜，润物细无声。', note:'好运悄悄靠近，低调一点就能接住。' },
+    { level:'上吉签', kind:'lv-good', poem:'海内存知己，天涯若比邻。', note:'身边有贵人，或你自己就是自己的贵人。' },
+    { level:'中平签', kind:'lv-mid', poem:'欲穷千里目，更上一层楼。', note:'平平淡淡也不差，再多走一步就有惊喜。' },
+    { level:'中平签', kind:'lv-mid', poem:'采菊东篱下，悠然见南山。', note:'放轻松，越淡定越有福气。' },
+    { level:'中平签', kind:'lv-mid', poem:'不识庐山真面目，只缘身在此山中。', note:'换个角度看，你会豁然开朗。' },
+    { level:'下下签', kind:'lv-bad', poem:'拔剑四顾心茫然。', note:'今天不宜冲动，稳住，明天再说。' },
+    { level:'下下签', kind:'lv-bad', poem:'抽刀断水水更流，举杯消愁愁更愁。', note:'先别急着解决，睡一觉，醒来再战。' },
+    { level:'下下签', kind:'lv-bad', poem:'欲渡黄河冰塞川，将登太行雪满山。', note:'处处碰壁？那就绕个道，别硬闯。' }
+  ];
+
+  let lastQian = null;
+
+  // 今天的日期
+  function todayStr() {
+    const d = new Date();
+    return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日';
+  }
+
+  function drawQian() {
+    const wish = document.getElementById('wishInput').value.trim() || '心中所想';
+    const q = QIAN[Math.floor(Math.random() * QIAN.length)];
+    lastQian = { wish, q, date: todayStr() };
+
+    document.getElementById('qTitle').textContent = '🎋 ' + wish + ' 的签';
+    document.getElementById('qDate').textContent = lastQian.date;
+    document.getElementById('qLevel').textContent = q.level;
+    document.getElementById('qLevel').className = 'qian-level ' + q.kind;
+    document.getElementById('qPoem').textContent = '「' + q.poem + '」';
+    document.getElementById('qNote').textContent = '解签：' + q.note;
+
+    document.getElementById('resultBox').style.display = 'block';
+    document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function copyQian() {
+    if (!lastQian) return;
+    const t = [
+      '🎋 抽签祈福',
+      '求问：' + lastQian.wish + '（' + lastQian.date + '）',
+      lastQian.q.level + '　「' + lastQian.q.poem + '」',
+      '解签：' + lastQian.q.note,
+      '—— 心诚则灵（大概）😄'
+    ].join('\n');
+    navigator.clipboard.writeText(t)
+      .then(() => alert('✅ 签文已复制！'))
+      .catch(() => alert('复制失败，请手动复制：\n\n' + t));
+  }
+
+  function downloadQian() {
+    if (!lastQian) return;
+    const W = 720, H = 520;
+    const cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    const ctx = cv.getContext('2d');
+    const g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, '#faf6ee'); g.addColorStop(1, '#f3ecdd');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#3d3527';
+    ctx.font = 'bold 30px "Microsoft YaHei"';
+    ctx.fillText('🎋 抽签祈福', W / 2, 70);
+
+    ctx.fillStyle = '#9c9077';
+    ctx.font = '18px "Microsoft YaHei"';
+    ctx.fillText('求问：' + lastQian.wish + '　·　' + lastQian.date, W / 2, 115);
+
+    ctx.fillStyle = kindColor(lastQian.q.kind);
+    ctx.font = 'bold 34px "Microsoft YaHei"';
+    ctx.fillText(lastQian.q.level, W / 2, 195);
+
+    ctx.fillStyle = '#3d3527';
+    ctx.font = '24px "Microsoft YaHei"';
+    ctx.fillText('「' + lastQian.q.poem + '」', W / 2, 260);
+
+    ctx.fillStyle = '#6c6350';
+    ctx.font = '18px "Microsoft YaHei"';
+    wrapText(ctx, '解签：' + lastQian.q.note, W / 2, 330, W - 120, 30);
+
+    ctx.fillStyle = '#b3a88f';
+    ctx.font = '16px "Microsoft YaHei"';
+    ctx.fillText('—— 心诚则灵（大概）😄', W / 2, 470);
+
+    const a = document.createElement('a');
+    a.href = cv.toDataURL('image/png');
+    a.download = '抽签-' + lastQian.date + '.png';
+    a.click();
+  }
+
+  function kindColor(kind) {
+    return { 'lv-great':'#2f8f4c', 'lv-good':'#3d7fd0', 'lv-mid':'#b8860b', 'lv-bad':'#c0504d' }[kind] || '#e8823a';
+  }
+
+  function wrapText(ctx, text, x, y, maxW, lineH) {
+    let line = '', lines = [];
+    for (const ch of text) {
+      if (ctx.measureText(line + ch).width > maxW) { lines.push(line); line = ch; }
+      else line += ch;
+    }
+    lines.push(line);
+    lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineH));
+  }
+  </script>
+</body>
+</html>

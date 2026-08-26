@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>人生重开模拟器</title>
+  <meta name="description" content="对现在的人生不满意？重开一把！随机投胎、随机天赋、五段人生，生成人生总结卡片。纯属娱乐。">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html">🏠 首页</a>
+    <a href="life.html" class="active">🔄 重开人生</a>
+    <a href="fortune.html">🔮 今日运势</a>
+    <a href="bazi.html">🧧 八字排盘</a>
+    <a href="qian.html">🎋 抽签祈福</a>
+    <a href="progress.html">🪙 人生进度条</a>
+    <a href="pixel-town.html">🏘️ 像素小镇</a>
+  </nav>
+
+  <div class="container">
+    <h1 class="title">人生重开模拟器</h1>
+    <p class="subtitle">对现在的人生不满意？那就重开一把！纯属娱乐，切勿当真 😎</p>
+
+    <!-- ① 开始界面 -->
+    <div id="startBox" class="card" style="text-align:center">
+      <p style="font-size:4em; margin-bottom:8px">🌀</p>
+      <p class="muted" style="margin-bottom:16px">每次重开都是全新的人生，属性、天赋、命运全部随机</p>
+      <button class="btn" onclick="startLife()">⚡ 重开人生</button>
+    </div>
+
+    <!-- ② 游戏界面（默认隐藏） -->
+    <div id="gameBox" style="display:none">
+
+      <!-- 出生卡片 -->
+      <div class="card">
+        <h2>🎂 你出生了</h2>
+        <p id="genderText" class="muted"></p>
+        <div class="attrs" id="attrsBox"></div>
+        <div id="talentBox" style="margin-top:12px"></div>
+      </div>
+
+      <!-- 人生履历（时间线） -->
+      <div class="card">
+        <h2>📜 人生履历</h2>
+        <ul class="log" id="logBox"></ul>
+        <div class="btn-row">
+          <button class="btn" id="nextBtn" onclick="nextStage()">▶ 进入童年</button>
+        </div>
+      </div>
+
+      <!-- 结局 -->
+      <div class="card" id="endCard" style="display:none; text-align:center">
+        <h2>🏁 结局</h2>
+        <div id="endText"></div>
+        <div class="btn-row">
+          <button class="btn gray" onclick="copySummary()">📋 复制总结</button>
+          <button class="btn gold" onclick="downloadCard()">🖼️ 下载卡片</button>
+          <button class="btn" onclick="resetGame()">🔁 再活一次</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>人生重开模拟器 · 一个写着玩的网站 · 纯属娱乐</footer>
+  </div>
+
+  <script>
+  // ==========================================================
+  // 第一部分：认识“数据”
+  // 游戏里的所有文案都定义在下面的数组里，想改内容只改这里，
+  // 不用动下面的逻辑代码。
+  // ==========================================================
+
+  // 天赋池：重开时会随机抽 2 个给你
+  const TALENTS = [
+    { emoji: "🧠", name: "过目不忘" },
+    { emoji: "💪", name: "天生神力" },
+    { emoji: "🍀", name: "锦鲤体质" },
+    { emoji: "🌙", name: "熬夜不困" },
+    { emoji: "🍚", name: "铁胃金刚" },
+    { emoji: "🗣️", name: "社交牛X症" },
+    { emoji: "🎵", name: "音感绝佳" },
+    { emoji: "😄", name: "乐天派" },
+    { emoji: "⚡", name: "行动力爆表" },
+    { emoji: "🧘", name: "情绪稳定" }
+  ];
+
+  // 人生阶段：endAge = 这个阶段结束时你的年龄
+  // 每个事件格式：{ t: 事件描述, k: 影响哪个属性, v: 影响多少 }
+  // 属性键名只能是：颜值 / 智力 / 体质 / 财富 / 幸福
+  const STAGES = [
+    {
+      name: "童年", endAge: 12,
+      events: [
+        { t: "你在幼儿园门口哭了一下午，因为妈妈走了。", k: "体质", v: -3 },
+        { t: "你发现自己是小区爬树冠军。", k: "体质", v: 5 },
+        { t: "偷偷看动画片被抓住，但确实好看。", k: "幸福", v: 3 },
+        { t: "考试得了 100 分，奖励了一顿肯德基。", k: "智力", v: 5 },
+        { t: "被同学抢了玩具，你学会了反击。", k: "体质", v: 2 },
+        { t: "被塞进奥数班，发现数学是魔鬼。", k: "幸福", v: -4 }
+      ]
+    },
+    {
+      name: "少年", endAge: 22,
+      events: [
+        { t: "高考前夜通宵复习，考场上睡着了。", k: "体质", v: -5 },
+        { t: "早恋被老师发现，请了家长。", k: "幸福", v: 6 },
+        { t: "打了三年游戏，成为全服第一。", k: "体质", v: -4 },
+        { t: "开始健身，腹肌初现雏形。", k: "体质", v: 8 },
+        { t: "选了“好就业”的专业，放弃了梦想。", k: "幸福", v: -8 },
+        { t: "编程比赛拿了奖，从此走上不归路。", k: "智力", v: 8 }
+      ]
+    },
+    {
+      name: "青年", endAge: 40,
+      events: [
+        { t: "入职大厂，开启 996 生活。", k: "财富", v: 30 },
+        { t: "工资翻倍，但头发少了一半。", k: "体质", v: -6 },
+        { t: "创业失败，赔光了积蓄。", k: "财富", v: -40 },
+        { t: "彩票中了 200 块，感觉是天选之子。", k: "幸福", v: 5 },
+        { t: "谈了恋爱，每天都是情人节。", k: "幸福", v: 15 },
+        { t: "学会做菜，厨艺惊艳朋友圈。", k: "幸福", v: 5 }
+      ]
+    },
+    {
+      name: "中年", endAge: 60,
+      events: [
+        { t: "开始养生，保温杯里泡枸杞。", k: "体质", v: 8 },
+        { t: "孩子上了大学，家里安静了。", k: "幸福", v: 8 },
+        { t: "体检报告亮红灯，医生让你少熬夜。", k: "体质", v: -10 },
+        { t: "升职加薪，成了部门老大。", k: "财富", v: 25 },
+        { t: "发际线全面撤退，你选择了释然。", k: "幸福", v: 2 },
+        { t: "老同学聚会，发现大家都胖了。", k: "幸福", v: 6 }
+      ]
+    },
+    {
+      name: "老年", endAge: 90,
+      events: [
+        { t: "晨练太极拳，广场舞一枝花。", k: "体质", v: 5 },
+        { t: "带孙子孙女，重温童年。", k: "幸福", v: 10 },
+        { t: "老花镜换了三副。", k: "体质", v: -2 },
+        { t: "和老伴环游世界，朋友圈每天九宫格。", k: "幸福", v: 12 },
+        { t: "生日宴摆了十桌，儿孙满堂。", k: "幸福", v: 15 }
+      ]
+    }
+  ];
+
+  // 死亡原因池（结局时随机抽一个）
+  const DEATH_CAUSES = [
+    "寿终正寝，在睡梦中微笑着离去",
+    "熬夜三十载，身体终于发出了抗议",
+    "吃了超辣火锅，含笑九泉",
+    "被自己的冷笑话冷死的",
+    "说了“再打一局就睡”，然后就没有然后了",
+    "望着窗外的夕阳，安详地闭上了眼",
+    "幸福值太高，笑到升天"
+  ];
+
+  // 评级：分数越高等级越高
+  const RANKS = [
+    { min: 160, grade: "S", title: "天选之子" },
+    { min: 120, grade: "A", title: "人生赢家" },
+    { min: 80,  grade: "B", title: "普通但幸福" },
+    { min: 45,  grade: "C", title: "有点坎坷" },
+    { min: 0,   grade: "D", title: "惨，但很搞笑" }
+  ];
+
+  // ==========================================================
+  // 第二部分：游戏状态与工具函数
+  // ==========================================================
+
+  let me = null;      // 当前这一局的人物（对象）
+  let stageIdx = 0;   // 进行到第几个阶段
+
+  // 随机整数：min ~ max（含两端）
+  function randInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  // 洗牌：把数组随机打乱（Fisher-Yates 算法）
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // ==========================================================
+  // 第三部分：开始新的人生
+  // ==========================================================
+  function startLife() {
+    // 1. 随机出生：性别、五项属性、天赋
+    me = {
+      性别: Math.random() < 0.5 ? "男" : "女",
+      颜值: randInt(10, 100),
+      智力: randInt(10, 100),
+      体质: randInt(10, 100),
+      财富: randInt(0, 100),
+      幸福: randInt(40, 90),
+      天赋: [],
+      事件: []   // 记录所有经历，结局时用来生成总结
+    };
+
+    // 抽 2 个天赋：洗牌后取前两个
+    me.天赋 = shuffle([...TALENTS]).slice(0, 2);
+
+    stageIdx = 0;
+
+    // 2. 切换界面：藏起开始按钮，显示游戏区
+    document.getElementById("startBox").style.display = "none";
+    document.getElementById("gameBox").style.display = "block";
+    document.getElementById("endCard").style.display = "none";
+    document.getElementById("nextBtn").style.display = "inline-block";
+    document.getElementById("nextBtn").textContent = "▶ 进入童年";
+
+    // 3. 显示出生信息
+    document.getElementById("genderText").textContent =
+      "这一世的你是个" + (me.性别 === "男" ? "男孩" : "女孩") + "，命运开始了……";
+
+    // 4. 用循环生成 5 个属性卡片（HTML 是拼出来的）
+    const attrsBox = document.getElementById("attrsBox");
+    attrsBox.innerHTML = "";
+    const ATTR_EMOJI = { 颜值: "📸", 智力: "🧠", 体质: "💪", 财富: "💰", 幸福: "😊" };
+    for (const key of ["颜值", "智力", "体质", "财富", "幸福"]) {
+      const div = document.createElement("div");
+      div.className = "attr";
+      div.innerHTML =
+        '<span class="emoji">' + ATTR_EMOJI[key] + "</span>" +
+        '<div class="name">' + key + "</div>" +
+        '<div class="val">' + me[key] + "</div>";
+      attrsBox.appendChild(div);
+    }
+
+    // 5. 显示天赋
+    document.getElementById("talentBox").innerHTML =
+      "<strong>✨ 随机天赋：</strong> " +
+      me.天赋.map(t => '<span class="chip">' + t.emoji + " " + t.name + "</span>").join("");
+
+    // 6. 清空时间线，写上第一行
+    document.getElementById("logBox").innerHTML = "";
+    addLog("🎂 你出生了！是个" + (me.性别 === "男" ? "男孩" : "女孩") + "。", "");
+  }
+
+  // 往时间线里加一行（type 传 "good" / "bad" / "" 控制左边颜色）
+  function addLog(text, type) {
+    const li = document.createElement("li");
+    if (type) li.className = type;
+    li.textContent = text;
+    document.getElementById("logBox").appendChild(li);
+  }
+
+  // ==========================================================
+  // 第四部分：进入下一阶段
+  // ==========================================================
+  function nextStage() {
+    if (stageIdx >= STAGES.length) return; // 所有阶段都走完了
+
+    const stage = STAGES[stageIdx];
+
+    // 每个阶段随机抽 3 个事件
+    const picked = shuffle([...stage.events]).slice(0, 3);
+
+    for (const ev of picked) {
+      me[ev.k] += ev.v;          // ① 属性变化
+      me.事件.push(ev.t);        // ② 记入履历
+      // ③ 显示在时间线上，正数绿色 / 负数红色
+      const type = ev.v > 0 ? "good" : (ev.v < 0 ? "bad" : "");
+      const diff = ev.v !== 0 ? "（" + ev.k + " " + (ev.v > 0 ? "+" : "") + ev.v + "）" : "";
+      addLog("【" + stage.name + "】" + ev.t + diff, type);
+    }
+
+    stageIdx++;
+
+    // 体质被扣到 0 以下 → 提前去世
+    if (me.体质 <= 0) {
+      die("被生活毒打，没能撑到下一阶段", stage.endAge);
+      return;
+    }
+
+    // 还有下一阶段 → 更新按钮文字
+    if (stageIdx < STAGES.length) {
+      document.getElementById("nextBtn").textContent = "▶ 进入" + STAGES[stageIdx].name;
+    } else {
+      // 所有阶段走完 → 随机死亡原因 + 年龄
+      die(DEATH_CAUSES[randInt(0, DEATH_CAUSES.length - 1)], randInt(68, 95));
+    }
+  }
+
+  // ==========================================================
+  // 第五部分：结局
+  // ==========================================================
+  function die(cause, age) {
+    me.死亡原因 = cause;
+    me.享年 = age;
+
+    document.getElementById("nextBtn").style.display = "none";
+
+    // 算总分：幸福最重要，智力/体质其次，财富最后
+    const score = Math.max(0, me.幸福) + me.智力 * 0.5 + me.体质 * 0.5 + Math.max(0, me.财富) * 0.2;
+    const rank = RANKS.find(r => score >= r.min);
+
+    // 根据属性凑成就
+    const ach = [];
+    if (me.颜值 >= 80) ach.push("📸 颜值担当");
+    if (me.智力 >= 80) ach.push("🧠 智慧担当");
+    if (me.体质 >= 80) ach.push("🏃 铁人三项");
+    if (me.财富 >= 150) ach.push("💰 财务自由");
+    if (me.财富 <= 20) ach.push("😅 月光族");
+    if (me.财富 <= 0) ach.push("📉 破产专家");
+    if (me.幸福 >= 100) ach.push("😄 人生赢家");
+    if (me.体质 <= 30) ach.push("🫙 玻璃人");
+    if (ach.length === 0) ach.push("🙂 普通路人");
+
+    me.成就 = ach;
+    me.评级 = rank;
+
+    // 渲染结局文字
+    document.getElementById("endText").innerHTML =
+      '<p style="font-size:1.2em; margin:10px 0">☠️ 死亡原因：' + cause + "</p>" +
+      '<p class="muted">享年 ' + me.享年 + " 岁</p>" +
+      '<p style="margin:14px 0"><span class="badge ' + rank.grade + '">' +
+        rank.grade + " 级 · " + rank.title + "</span></p>" +
+      "<p><strong>🏆 人生成就：</strong></p>" +
+      "<p>" + ach.join("　") + "</p>";
+
+    document.getElementById("endCard").style.display = "block";
+    document.getElementById("endCard").scrollIntoView({ behavior: "smooth" });
+  }
+
+  // ==========================================================
+  // 第六部分：分享（复制文字 / 下载图片）
+  // ==========================================================
+
+  // 生成一段可复制的文字总结
+  function summaryText() {
+    return [
+      "🔄 人生重开模拟器 · 人生总结",
+      "性别：" + me.性别 + "　颜值 " + me.颜值 + "　智力 " + me.智力 +
+        "　体质 " + me.体质 + "　财富 " + me.财富 + "　幸福 " + me.幸福,
+      "天赋：" + me.天赋.map(t => t.name).join("、"),
+      "成就：" + me.成就.join("、"),
+      "结局：" + me.死亡原因 + "，享年 " + me.享年 + " 岁",
+      "综合评级：" + me.评级.grade + " 级（" + me.评级.title + "）",
+      "—— 纯属娱乐，认真你就输了 😂"
+    ].join("\n");
+  }
+
+  function copySummary() {
+    // navigator.clipboard 需要 https 或 localhost 环境才能用
+    navigator.clipboard.writeText(summaryText())
+      .then(() => alert("✅ 人生总结已复制，去粘贴分享吧！"))
+      .catch(() => alert("复制失败，请手动复制：\n\n" + summaryText()));
+  }
+
+  // 用 Canvas 画一张卡片图片并下载（不依赖任何第三方库）
+  function downloadCard() {
+    const W = 880, H = 520;
+    const cv = document.createElement("canvas");
+    cv.width = W; cv.height = H;
+    const ctx = cv.getContext("2d");
+
+    // 背景：深色渐变
+    const g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, "#0f0c29");
+    g.addColorStop(0.5, "#302b63");
+    g.addColorStop(1, "#24243e");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    // 标题
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#ffd200";
+    ctx.font = "bold 30px 'Microsoft YaHei'";
+    ctx.fillText("🔄 人生重开模拟器 · 人生总结", W / 2, 55);
+
+    // 属性一行
+    ctx.fillStyle = "#eee";
+    ctx.font = "20px 'Microsoft YaHei'";
+    ctx.fillText(
+      "性别：" + me.性别 + "　颜值 " + me.颜值 + "　智力 " + me.智力 +
+      "　体质 " + me.体质 + "　财富 " + me.财富 + "　幸福 " + me.幸福,
+      W / 2, 110
+    );
+
+    // 天赋
+    ctx.fillStyle = "#7ee2a8";
+    ctx.fillText("✨ 天赋：" + me.天赋.map(t => t.emoji + t.name).join("　"), W / 2, 160);
+
+    // 成就
+    ctx.fillStyle = "#ffd2a0";
+    ctx.fillText("🏆 成就：" + me.成就.join("　"), W / 2, 210);
+
+    // 结局
+    ctx.fillStyle = "#fff";
+    ctx.fillText("☠️ 结局：" + me.死亡原因 + "，享年 " + me.享年 + " 岁", W / 2, 265);
+
+    // 评级徽章：圆角矩形 + 文字
+    const badgeText = me.评级.grade + " 级 · " + me.评级.title;
+    ctx.font = "bold 26px 'Microsoft YaHei'";
+    const bw = ctx.measureText(badgeText).width + 60;
+    const bx = (W - bw) / 2, by = 300, bh = 56;
+    ctx.fillStyle = me.评级.grade === "S" ? "#f7971e" : "#2ecc71";
+    roundRect(ctx, bx, by, bw, bh, 28);
+    ctx.fill();
+    ctx.fillStyle = "#fff";
+    ctx.fillText(badgeText, W / 2, by + bh / 2 + 9);
+
+    // 底部小字
+    ctx.fillStyle = "#888";
+    ctx.font = "16px 'Microsoft YaHei'";
+    ctx.fillText("人生重开模拟器 · 纯属娱乐，认真你就输了 😂", W / 2, 480);
+
+    // 下载成 PNG 图片
+    const a = document.createElement("a");
+    a.href = cv.toDataURL("image/png");
+    a.download = "人生总结.png";
+    a.click();
+  }
+
+  // 画圆角矩形的辅助函数（Canvas 没有现成的，自己写一个）
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  // 刷新页面 = 重新开始（最简单粗暴的方式）
+  function resetGame() {
+    location.reload();
+  }
+  </script>
+</body>
+</html>

@@ -1,25 +1,25 @@
 /* ==========================================================
-   人生重开模拟器 · 象牙白主题（三页面共用）
-   配色：象牙白底 + 温暖卡片 + 橙色点缀
-   全站平涂 / 无渐变 / 统一又带点暖意
+   整活小站 · Life Restart —— 深蓝主题（全站共用）
+   配色：深蓝底 + 蓝卡片 + 亮蓝点缀
+   全站平涂 / 无渐变 / 统一又清爽
    ========================================================== */
 
 html { scroll-behavior: smooth; }
 
 /* 颜色集中在这里，改一处全站生效 */
 :root {
-  --bg: #faf6ee;              /* 象牙白背景 */
-  --surface: #ffffff;         /* 卡片面 */
-  --surface-2: #f3ecdd;       /* 次级面（内嵌区域/输入框） */
-  --border: #e8dfcc;          /* 边框 */
-  --text: #3d3527;            /* 主文字（暖深棕） */
-  --muted: #9c9077;           /* 次要文字 */
-  --accent: #e8823a;          /* 品牌橙 */
-  --accent-strong: #d8731f;   /* 橙（悬停加深） */
-  --accent-soft: rgba(232,130,58,.14);
-  --good: #4a9d5f;            /* 好事 */
-  --bad: #c74c4c;             /* 坏事 */
-  --warn: #c9962b;            /* 中等评级 */
+  --bg: #0d1a2b;             /* 深蓝背景 */
+  --surface: #15263a;        /* 卡片面 */
+  --surface-2: #1d2f47;      /* 次级面（内嵌区域/输入框） */
+  --border: #2a3f5d;         /* 边框 */
+  --text: #e6edf5;           /* 主文字 */
+  --muted: #8ca0ba;          /* 次要文字 */
+  --accent: #5da8e5;         /* 品牌亮蓝 */
+  --accent-strong: #4a92d4;  /* 亮蓝（悬停加深） */
+  --accent-soft: rgba(93,168,229,.14);
+  --good: #4ade80;           /* 好事 */
+  --bad: #f4716e;            /* 坏事 */
+  --warn: #f5b041;           /* 中等评级 */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -35,11 +35,11 @@ body {
 /* ---------- 顶部导航 ---------- */
 .nav {
   display: flex; justify-content: center; gap: 6px;
-  padding: 20px 12px; flex-wrap: wrap;
+  padding: 18px 12px; flex-wrap: wrap;
 }
 .nav a {
   text-decoration: none; color: var(--muted);
-  padding: 7px 16px; border-radius: 999px; font-size: .95em;
+  padding: 7px 14px; border-radius: 999px; font-size: .9em;
   transition: color .15s, background .15s;
 }
 .nav a:hover { color: var(--text); background: var(--surface-2); }
@@ -47,12 +47,30 @@ body {
 
 /* ---------- 页面骨架 ---------- */
 .container { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+.container.slim { max-width: 680px; }
 
 h1.title {
   text-align: center; font-size: 2.2em; font-weight: 700;
   margin: 16px 0 6px; color: var(--text); letter-spacing: .5px;
 }
 .subtitle { text-align: center; color: var(--muted); margin-bottom: 24px; font-size: .95em; }
+
+/* ---------- 首页 hero + 模块卡片 ---------- */
+.hero { text-align: center; padding: 28px 0 8px; }
+.hero-emoji { font-size: 3.4em; display: block; margin-bottom: 4px; }
+.hero h1 { margin-top: 4px; }
+
+.mod-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 18px 0 8px; }
+.mod-card {
+  display: block; text-decoration: none;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 24px 16px; text-align: center; color: var(--text);
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+}
+.mod-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 8px 22px rgba(0,0,0,.35); }
+.mod-card .emoji { font-size: 2.4em; display: block; margin-bottom: 10px; }
+.mod-card h3 { font-size: 1.05em; font-weight: 600; margin-bottom: 6px; }
+.mod-card p { font-size: .85em; color: var(--muted); }
 
 /* ---------- 卡片 ---------- */
 .card {
@@ -61,7 +79,7 @@ h1.title {
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(61,53,39,.06);
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
 }
 .card h2 { font-size: 1.05em; font-weight: 600; margin-bottom: 12px; color: var(--text); }
 
@@ -71,14 +89,14 @@ h1.title {
   display: inline-block; border: 1px solid transparent; cursor: pointer;
   font-size: .95em; font-weight: 600; font-family: inherit;
   padding: 10px 22px; border-radius: 999px;
-  color: #fff; background: var(--accent);
+  color: #0d1a2b; background: var(--accent);
   transition: background .15s, transform .08s;
 }
 .btn:hover { background: var(--accent-strong); }
 .btn:active { transform: translateY(1px); }
 .btn.gray { color: var(--text); background: var(--surface-2); border-color: var(--border); }
-.btn.gray:hover { background: #ece2cf; }
-.btn.gold { color: #fff; background: var(--accent); border-color: transparent; }
+.btn.gray:hover { background: #263a57; }
+.btn.gold { color: #0d1a2b; background: var(--accent); border-color: transparent; }
 .btn.gold:hover { background: var(--accent-strong); }
 
 /* ---------- 出生属性 ---------- */
@@ -91,7 +109,7 @@ h1.title {
 /* ---------- 天赋小标签 ---------- */
 .chip {
   display: inline-block; margin: 4px 6px 0 0; padding: 5px 12px;
-  background: var(--accent-soft); border: 1px solid rgba(232,130,58,.4);
+  background: var(--accent-soft); border: 1px solid rgba(93,168,229,.35);
   border-radius: 999px; font-size: .9em; color: var(--accent);
 }
 
@@ -108,14 +126,14 @@ h1.title {
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
 /* ---------- 评分徽章（纯色，平涂） ---------- */
-.badge { display: inline-block; padding: 6px 20px; border-radius: 999px; font-size: 1.25em; font-weight: 700; color: #fff; }
+.badge { display: inline-block; padding: 6px 20px; border-radius: 999px; font-size: 1.25em; font-weight: 700; color: #0d1a2b; }
 .badge.S { background: var(--accent); }
 .badge.A { background: var(--good); }
-.badge.B { background: #4a90d9; }
+.badge.B { background: #5aa7e8; }
 .badge.C { background: var(--warn); }
-.badge.D { background: #9aa3ad; }
+.badge.D { background: #8ca0ba; }
 
-/* ---------- 表单（运势页 / 八字页用） ---------- */
+/* ---------- 表单 ---------- */
 input, select {
   background: var(--surface); border: 1px solid var(--border);
   color: var(--text); padding: 10px 14px; border-radius: 10px;
@@ -125,8 +143,8 @@ input:focus, select:focus { outline: none; border-color: var(--accent); }
 select option { background: var(--surface); }
 .form-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; }
 
-/* ---------- 运势卡片（用橙色边框做区隔，保持统一） ---------- */
-.fortune-card { text-align: center; background: var(--surface); border: 1px solid rgba(232,130,58,.4); }
+/* ---------- 运势卡片（用亮蓝边框做区隔，保持统一） ---------- */
+.fortune-card { text-align: center; background: var(--surface); border: 1px solid rgba(93,168,229,.4); }
 .fortune-card h2 { margin-bottom: 4px; }
 .fortune-date { color: var(--muted); font-size: .9em; margin-bottom: 14px; }
 .frow { display: flex; align-items: center; gap: 10px; margin: 10px 0; text-align: left; }
@@ -150,17 +168,35 @@ select option { background: var(--surface); }
 .bazi-cell .gz { font-size: 1.6em; font-weight: 700; color: var(--accent); }
 .bazi-cell .name { color: var(--muted); font-size: .85em; margin: 4px 0 2px; }
 .bazi-cell .wx { font-size: .9em; color: var(--text); }
+.bazi-cell .ny { font-size: .8em; color: var(--muted); margin-top: 4px; }
 .wuxing-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
 .wx-box { min-width: 52px; text-align: center; padding: 8px 10px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; }
 .wx-box b { display: block; font-size: 1.3em; color: var(--accent); }
 .wx-box span { font-size: .85em; color: var(--muted); }
 .bazi-note { color: var(--muted); font-size: .85em; text-align: center; margin-top: 10px; }
+.bazi-analysis { text-align: left; margin: 16px 0 0; padding-top: 14px; border-top: 1px dashed var(--border); line-height: 2; font-size: .95em; }
+.bazi-analysis b { color: var(--accent); }
+.bazi-analysis strong { color: var(--text); }
+
+/* ---------- 抽签页 ---------- */
+.qian-level { font-size: 1.6em; font-weight: 700; margin: 6px 0; }
+.lv-great { color: #5ee08a; }
+.lv-good { color: #6cb4f5; }
+.lv-mid { color: #f5b041; }
+.lv-bad { color: #f4716e; }
+.qian-poem { font-size: 1.1em; line-height: 1.9; color: var(--text); margin: 12px 0; }
+.qian-note { color: var(--muted); }
+
+/* ---------- 人生进度条页 ---------- */
+.progress-num { font-size: 2.6em; font-weight: 700; color: var(--accent); margin: 6px 0 12px; }
+.progress-bar { height: 22px; background: var(--surface-2); border-radius: 999px; border: 1px solid var(--border); overflow: hidden; margin: 0 8px 14px; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 999px; transition: width .8s ease; }
 
 /* ---------- 像素小镇 ---------- */
-canvas { display: block; margin: 0 auto; border-radius: 10px; border: 1px solid var(--border); background: #e9e0cd; }
+canvas { display: block; margin: 0 auto; border-radius: 10px; border: 1px solid var(--border); background: #0d2440; }
 .seed-box { text-align: center; margin: 12px 0; }
 .seed-box input { width: 130px; text-align: center; }
 
 /* ---------- 其他 ---------- */
 .muted { color: var(--muted); font-size: .85em; }
-footer { text-align: center; color: #b3a88f; font-size: .8em; margin-top: 30px; }
+footer { text-align: center; color: #5f7089; font-size: .8em; margin-top: 30px; }

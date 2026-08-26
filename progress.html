@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>人生进度条</title>
+  <meta name="description" content="输入生日，看看你已经度过人生的百分之多少，配一句调侃文案。人生进度条，走到哪算哪。">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html">🏠 首页</a>
+    <a href="life.html">🔄 重开人生</a>
+    <a href="fortune.html">🔮 今日运势</a>
+    <a href="bazi.html">🧧 八字排盘</a>
+    <a href="qian.html">🎋 抽签祈福</a>
+    <a href="progress.html" class="active">🪙 人生进度条</a>
+    <a href="pixel-town.html">🏘️ 像素小镇</a>
+  </nav>
+
+  <div class="container">
+    <h1 class="title">人生进度条</h1>
+    <p class="subtitle">你的人生已经走到哪了？看看进度，配一句调侃 🪙</p>
+
+    <!-- 输入区 -->
+    <div class="card" style="text-align:center">
+      <div class="form-row">
+        <input id="birthDate" type="date">
+        <input id="lifeSpan" type="number" placeholder="预期寿命(默认80)" min="1" max="120">
+        <button class="btn" onclick="calProgress()">🪙 算进度</button>
+      </div>
+      <p class="muted" style="margin-top:10px">出生日期必填；预期寿命留空按 80 岁算</p>
+    </div>
+
+    <!-- 结果区（初始隐藏） -->
+    <div class="card" id="resultBox" style="display:none; text-align:center">
+      <h2 id="pTitle">你的人生进度</h2>
+      <p class="fortune-date" id="pSub"></p>
+
+      <p class="progress-num" id="pPercent">--%</p>
+      <div class="progress-bar"><div class="progress-fill" id="pFill" style="width:0%"></div></div>
+
+      <p class="lucky-list" id="pStats" style="text-align:center"></p>
+      <p class="prophecy" id="pSay"></p>
+
+      <div class="btn-row">
+        <button class="btn gray" onclick="copyProgress()">📋 复制文案</button>
+        <button class="btn gold" onclick="downloadProgress()">🖼️ 下载卡片</button>
+      </div>
+    </div>
+
+    <footer>人生进度条 · 走到哪算哪，开心就好</footer>
+  </div>
+
+  <script src="js/lunar.js"></script>
+  <script>
+  let lastData = null;
+
+  function calProgress() {
+    const dval = document.getElementById('birthDate').value;
+    if (!dval) { alert('请先选择出生日期'); return; }
+    const parts = dval.split('-');
+    const y = +parts[0], m = +parts[1], d = +parts[2];
+    const lifeYears = parseInt(document.getElementById('lifeSpan').value, 10) || 80;
+
+    const birth = new Date(y, m - 1, d);
+    const now = new Date();
+    const ageDays = Math.floor((now - birth) / 86400000);
+    if (ageDays < 0) { alert('出生日期在未来？回到现实吧 😅'); return; }
+
+    const lifeDays = lifeYears * 365.25;
+    const percent = Math.min(100, ageDays / lifeDays * 100);
+    const ageYears = ageDays / 365.25;
+    const remainDays = Math.max(0, Math.round(lifeDays - ageDays));
+
+    const lun = window.lunar.lunarDate(y, m, d);
+    lastData = { y, m, d, lifeYears, ageDays, percent, ageYears, remainDays, lun, zodiac: lun.zodiac };
+
+    document.getElementById('pTitle').textContent = '🪙 ' + (lifeYears) + ' 岁人生的进度';
+    document.getElementById('pPercent').textContent = percent.toFixed(1) + '%';
+    document.getElementById('pFill').style.width = percent.toFixed(1) + '%';
+
+    const say = agePhrase(ageYears);
+    document.getElementById('pSub').textContent =
+      y + '年' + m + '月' + d + '日 · 农历' + lun.monthCn + lun.dayCn + ' · 生肖 ' + lun.zodiac;
+    document.getElementById('pStats').innerHTML =
+      '已走过 <b style="color:var(--accent)">' + ageDays.toLocaleString() + '</b> 天　·　还剩 <b style="color:var(--accent)">' + remainDays.toLocaleString() + '</b> 天　·　人生的 <b style="color:var(--accent)">' + percent.toFixed(1) + '%</b> 已经用完';
+    document.getElementById('pSay').textContent = '🗣️ ' + say;
+
+    document.getElementById('resultBox').style.display = 'block';
+    document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function agePhrase(age) {
+    if (age < 18) return '还在新手村，未来无限可能，别怕。';
+    if (age < 26) return '正是折腾的好时候，去犯错、去体验、去长大。';
+    if (age < 36) return '开始懂了，但也别把自己累垮。';
+    if (age < 46) return '上有老下有小，稳住，你能行。';
+    if (age < 60) return '看淡了很多，是该对自己好一点了。';
+    if (age < 75) return '享受生活，感恩走过的每一步。';
+    return '人生赢家本家，剩下的都是赚的。';
+  }
+
+  function copyProgress() {
+    if (!lastData) return;
+    const t = [
+      '🪙 人生进度条',
+      lastData.y + '年' + lastData.m + '月' + lastData.d + '日出生 · 生肖 ' + lastData.zodiac + ' · 预期 ' + lastData.lifeYears + ' 岁',
+      '已走过 ' + lastData.ageDays.toLocaleString() + ' 天，还剩 ' + lastData.remainDays.toLocaleString() + ' 天',
+      '人生已度过 **' + lastData.percent.toFixed(1) + '%**',
+      '『' + agePhrase(lastData.ageYears) + '』',
+      '—— 人生进度条，纯属娱乐 😄'
+    ].join('\n');
+    navigator.clipboard.writeText(t)
+      .then(() => alert('✅ 进度文案已复制！'))
+      .catch(() => alert('复制失败，请手动复制：\n\n' + t));
+  }
+
+  function downloadProgress() {
+    if (!lastData) return;
+    const W = 720, H = 520;
+    const cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    const ctx = cv.getContext('2d');
+    const g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, '#faf6ee'); g.addColorStop(1, '#f3ecdd');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#3d3527';
+    ctx.font = 'bold 30px "Microsoft YaHei"';
+    ctx.fillText('🪙 人生进度条', W / 2, 70);
+
+    ctx.fillStyle = '#9c9077';
+    ctx.font = '18px "Microsoft YaHei"';
+    ctx.fillText(lastData.y + '年' + lastData.m + '月' + lastData.d + '日出生 · 预期 ' + lastData.lifeYears + ' 岁', W / 2, 115);
+
+    ctx.fillStyle = '#e8823a';
+    ctx.font = 'bold 64px "Microsoft YaHei"';
+    ctx.fillText(lastData.percent.toFixed(1) + '%', W / 2, 210);
+
+    // 进度条
+    const bx = 80, by = 240, bw = W - 160, bh = 22;
+    ctx.fillStyle = '#e9e0cd'; ctx.fillRect(bx, by, bw, bh);
+    ctx.fillStyle = '#e8823a'; ctx.fillRect(bx, by, bw * lastData.percent / 100, bh);
+
+    ctx.fillStyle = '#3d3527';
+    ctx.font = '20px "Microsoft YaHei"';
+    ctx.fillText('已过 ' + lastData.ageDays.toLocaleString() + ' 天 · 还剩 ' + lastData.remainDays.toLocaleString() + ' 天', W / 2, 310);
+
+    ctx.fillStyle = '#6c6350';
+    ctx.font = '20px "Microsoft YaHei"';
+    ctx.fillText('『' + agePhrase(lastData.ageYears) + '』', W / 2, 380);
+
+    ctx.fillStyle = '#b3a88f';
+    ctx.font = '16px "Microsoft YaHei"';
+    ctx.fillText('—— 人生进度条，纯属娱乐 😄', W / 2, 470);
+
+    const a = document.createElement('a');
+    a.href = cv.toDataURL('image/png');
+    a.download = '人生进度-' + lastData.y + '.png';
+    a.click();
+  }
+  </script>
+</body>
+</html>

@@ -4,13 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>八字排盘</title>
+  <meta name="description" content="输入出生日期与时辰，排出四柱八字、纳音五行、五行缺补与生肖冲合。玄学娱乐，开心就好。">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <nav class="nav">
-    <a href="index.html">🔄 重开人生</a>
+    <a href="index.html">🏠 首页</a>
+    <a href="life.html">🔄 重开人生</a>
     <a href="fortune.html">🔮 今日运势</a>
     <a href="bazi.html" class="active">🧧 八字排盘</a>
+    <a href="qian.html">🎋 抽签祈福</a>
+    <a href="progress.html">🪙 人生进度条</a>
     <a href="pixel-town.html">🏘️ 像素小镇</a>
   </nav>
 
@@ -38,6 +43,8 @@
 
       <div style="margin-top:16px"><span class="muted">五行分布</span></div>
       <div class="wuxing-row" id="bWx"></div>
+
+      <div class="bazi-analysis" id="bAnalysis"></div>
 
       <p class="bazi-note" id="bNote"></p>
 
@@ -76,19 +83,21 @@
       ' · 农历' + lun.gan + lun.zhi + '年' + lun.monthCn + lun.dayCn +
       (hour !== null ? ' · ' + shichenName(hour) : '');
 
-    // 四柱
+    // 四柱（含纳音五行）
     const cells = [
-      { name: '年柱', gz: p.year.gan + p.year.zhi, wx: wxOf(p.year.gan, p.year.zhi) },
-      { name: '月柱', gz: p.month.gan + p.month.zhi, wx: wxOf(p.month.gan, p.month.zhi) },
-      { name: '日柱', gz: p.day.gan + p.day.zhi, wx: wxOf(p.day.gan, p.day.zhi) },
-      { name: '时柱', gz: p.hour ? p.hour.gan + p.hour.zhi : '--', wx: p.hour ? wxOf(p.hour.gan, p.hour.zhi) : '未填' }
+      { name: '年柱', gz: p.year.gan + p.year.zhi, wx: wxOf(p.year.gan, p.year.zhi), ny: window.lunar.nayinOf(p.year.gan, p.year.zhi) },
+      { name: '月柱', gz: p.month.gan + p.month.zhi, wx: wxOf(p.month.gan, p.month.zhi), ny: window.lunar.nayinOf(p.month.gan, p.month.zhi) },
+      { name: '日柱', gz: p.day.gan + p.day.zhi, wx: wxOf(p.day.gan, p.day.zhi), ny: window.lunar.nayinOf(p.day.gan, p.day.zhi) },
+      { name: '时柱', gz: p.hour ? p.hour.gan + p.hour.zhi : '--', wx: p.hour ? wxOf(p.hour.gan, p.hour.zhi) : '未填', ny: p.hour ? window.lunar.nayinOf(p.hour.gan, p.hour.zhi) : '' }
     ];
     const grid = document.getElementById('bGrid');
     grid.innerHTML = '';
     for (const c of cells) {
       const div = document.createElement('div');
       div.className = 'bazi-cell';
-      div.innerHTML = '<div class="name">' + c.name + '</div><div class="gz">' + c.gz + '</div><div class="wx">' + c.wx + '</div>';
+      div.innerHTML =
+        '<div class="name">' + c.name + '</div><div class="gz">' + c.gz +
+        '</div><div class="wx">' + c.wx + '</div>' + (c.ny ? '<div class="ny">' + c.ny + '</div>' : '');
       grid.appendChild(div);
     }
 
@@ -104,6 +113,22 @@
       box.innerHTML = '<b>' + k + '</b><span>' + n + '</span>';
       wxBox.appendChild(box);
     }
+
+    // 五行缺 + 补益 + 生肖冲合
+    const ZODIAC_ARR = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+    const zIdx = ZODIAC_ARR.indexOf(p.zodiac);
+    const missing = window.lunar.wuxingMissing(detail.wuxing);
+    const ch = window.lunar.zodiacChongHe(zIdx);
+    let ana = '';
+    if (missing.length) {
+      ana += '<p><strong>五行缺：</strong>' + missing.join('、') + '</p>';
+      ana += '<p><strong>补益：</strong>平时可多穿 <b>' + missing.map(k => window.lunar.WX_COLOR[k]).join('、') +
+        '</b>，多朝 <b>' + missing.map(k => window.lunar.WX_DIR[k]).join('、') + '</b> 方向走走。</p>';
+    } else {
+      ana += '<p><strong>五行齐备</strong>，运势平稳，恭喜！</p>';
+    }
+    ana += '<p><strong>生肖：</strong>' + p.zodiac + '，与 <b>' + ch.chong + '</b> 相冲、与 <b>' + ch.he + '</b> 相合。</p>';
+    document.getElementById('bAnalysis').innerHTML = ana;
 
     document.getElementById('bNote').textContent =
       hour === null ? '未填时辰，故只排三柱（年 / 月 / 日）' : '以上为公历排盘，命理玄学仅供娱乐';
@@ -128,12 +153,21 @@
   // 复制结果
   function copyBazi() {
     if (!lastBazi) return;
-    const p = lastBazi.detail.pillars;
+    const detail = lastBazi.detail;
+    const p = detail.pillars;
+    const missing = window.lunar.wuxingMissing(detail.wuxing);
+    const zIdx = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'].indexOf(p.zodiac);
+    const ch = window.lunar.zodiacChongHe(zIdx);
     const lines = [
       '🧧 八字排盘',
       '公历：' + lastBazi.y + '年' + lastBazi.m + '月' + lastBazi.d + '日' + (lastBazi.hour !== null ? ' ' + lastBazi.hour + '时' : ''),
       '四柱：年 ' + p.year.gan + p.year.zhi + '　月 ' + p.month.gan + p.month.zhi + '　日 ' + p.day.gan + p.day.zhi + (p.hour ? '　时 ' + p.hour.gan + p.hour.zhi : ''),
-      '生肖：' + p.zodiac,
+      '纳音：年 ' + window.lunar.nayinOf(p.year.gan, p.year.zhi) +
+        '　月 ' + window.lunar.nayinOf(p.month.gan, p.month.zhi) +
+        '　日 ' + window.lunar.nayinOf(p.day.gan, p.day.zhi) +
+        (p.hour ? '　时 ' + window.lunar.nayinOf(p.hour.gan, p.hour.zhi) : ''),
+      '五行：' + (missing.length ? '缺 ' + missing.join('、') : '齐备') + '　·　生肖 ' + p.zodiac +
+        '（与 ' + ch.chong + ' 冲、与 ' + ch.he + ' 合）',
       '—— 命理玄学，开心就好 😄'
     ];
     navigator.clipboard.writeText(lines.join('\n'))

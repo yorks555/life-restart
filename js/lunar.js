@@ -221,6 +221,44 @@ function baziDetail(y, m, d, hour) {
   return { pillars: p, wuxing: count };
 }
 
+// ==========================================================
+// 纳音五行 / 五行缺补 / 生肖冲合
+// ==========================================================
+
+// 30 个纳音（每 2 个甲子共用一个）
+const NAYIN = ['海中金','炉中火','大林木','路旁土','剑锋金','山头火','涧下水','城头土','白蜡金','杨柳木',
+  '泉中水','屋上土','霹雳火','松柏木','长流水','沙中金','山下火','平地木','壁上土','金箔金',
+  '覆灯火','天河水','大驿土','钗钏金','桑柘木','大溪水','沙中土','天上火','石榴木','大海水'];
+
+// 由天干地支算出它在 60 甲子中的序号（0-59）
+function gzIndex(gan, zhi) {
+  const g = GAN.indexOf(gan), z = ZHI.indexOf(zhi);
+  for (let n = 0; n < 60; n++) if (n % 10 === g && n % 12 === z) return n;
+  return 0;
+}
+
+// 一柱的纳音五行，如 "甲子"→ 海中金
+function nayinOf(gan, zhi) {
+  return NAYIN[Math.floor(gzIndex(gan, zhi) / 2)];
+}
+
+// 五行缺失（出现次数为 0 的行）
+function wuxingMissing(count) {
+  return Object.keys(count).filter(k => count[k] === 0);
+}
+
+// 五行对应的颜色 / 方位（用于“补益”建议）
+const WX_COLOR = { 木: '青色、绿色', 火: '红色、紫色', 土: '黄色、棕色', 金: '白色、金色', 水: '黑色、蓝色' };
+const WX_DIR = { 木: '东方', 火: '南方', 土: '中央、西南', 金: '西方', 水: '北方' };
+
+// 生肖相冲 / 相合（z：0=子鼠 ... 11=亥猪）
+function zodiacChongHe(z) {
+  const chong = ZODIAC[(z + 6) % 12];                 // 六冲
+  const heMap = [1, 0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2]; // 六合
+  const he = ZODIAC[heMap[z]];
+  return { chong, he };
+}
+
 // 暴露到全局
-if (typeof window !== 'undefined') window.lunar = { solar2lunar, monthCn, dayCn, yearGanZhi, getTermName, lunarDate, bazi, baziDetail };
-if (typeof module !== 'undefined' && module.exports) module.exports = { solar2lunar, monthCn, dayCn, yearGanZhi, getTermName, lunarDate, bazi, baziDetail };
+if (typeof window !== 'undefined') window.lunar = { solar2lunar, monthCn, dayCn, yearGanZhi, getTermName, lunarDate, bazi, baziDetail, gzIndex, nayinOf, wuxingMissing, zodiacChongHe, WX_COLOR, WX_DIR };
+if (typeof module !== 'undefined' && module.exports) module.exports = { solar2lunar, monthCn, dayCn, yearGanZhi, getTermName, lunarDate, bazi, baziDetail, gzIndex, nayinOf, wuxingMissing, zodiacChongHe, WX_COLOR, WX_DIR };
