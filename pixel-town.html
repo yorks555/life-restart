@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>像素小镇生成器</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html">🔄 重开人生</a>
+    <a href="fortune.html">🔮 今日运势</a>
+    <a href="pixel-town.html" class="active">🏘️ 像素小镇</a>
+  </nav>
+
+  <div class="container">
+    <h1 class="title">像素小镇生成器</h1>
+    <p class="subtitle">每次生成一座独一无二的小镇，记住编号就能还原同一座 🏡</p>
+
+    <div class="card">
+      <canvas id="town" width="576" height="432"></canvas>
+      <div class="seed-box">
+        <input id="seedInput" type="number" placeholder="小镇编号">
+        <button class="btn" onclick="generate()">🎲 生成小镇</button>
+        <button class="btn gold" onclick="downloadTown()">🖼️ 下载图片</button>
+      </div>
+      <p class="muted" style="text-align:center" id="seedText"></p>
+    </div>
+
+    <footer>像素小镇生成器 · 纯前端生成，没有两张一模一样的小镇</footer>
+  </div>
+
+  <script>
+  // ==========================================================
+  // 核心思路：把小镇当成一张“格子地图”，每个格子是一种东西
+  // （海 / 沙滩 / 草地 / 路 / 树 / 房子），然后按格子涂色。
+  // 种子（编号）决定一切随机数 → 同样的编号 = 同样的地图。
+  // ==========================================================
+
+  // 地图大小（格子数）和每个格子的像素大小
+  const W = 48, H = 36, TILE = 12;
+
+  // 格子类型（数字代号）
+  const WATER = 0, SAND = 1, GRASS = 2, ROAD = 3, TREE = 4, HOUSE = 5;
+
+  // 种子随机数：同样的种子 → 同样的随机序列
+  function mulberry32(seed) {
+    return function () {
+      seed |= 0;
+      seed = (seed + 0x6D2B79F5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  // ==========================================================
+  // 第一步：根据种子生成地图（一个二维数组）
+  // ==========================================================
+  function makeMap(seed) {
+    const rand = mulberry32(seed);
+
+    // 1. 整张地图先全是海
+    const g = Array.from({ length: H }, () => Array(W).fill(WATER));
+
+    // 2. 随机游走：从中心出发，走 600 步，每步把附近画成草地
+    //    （走出来的路径连成一片，就像大陆的形状）
+    let cx = Math.floor(W / 2), cy = Math.floor(H / 2);
+    function mark(x, y) {
+      for (let dx = -2; dx <= 2; dx++) {
+        for (let dy = -2; dy <= 2; dy++) {
+          if (Math.abs(dx) + Math.abs(dy) <= 2) {
+            const nx = x + dx, ny = y + dy;
+            if (nx >= 0 && ny >= 0 && nx < W && ny < H) g[ny][nx] = GRASS;
+          }
+        }
+      }
+    }
+    for (let i = 0; i < 600; i++) {
+      mark(cx, cy);
+      cx += rand() < 0.5 ? -1 : 1;
+      cy += rand() < 0.5 ? -1 : 1;
+      cx = Math.max(1, Math.min(W - 2, cx));
+      cy = Math.max(1, Math.min(H - 2, cy));
+    }
+
+    // 3. 平滑：周围陆地少于 2 块的格子变回海（去掉零碎小点）
+    function countLand(x, y) {
+      let n = 0;
+      for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+          if (dx === 0 && dy === 0) continue;
+          const nx = x + dx, ny = y + dy;
+          if (nx >= 0 && ny >= 0 && nx < W && ny < H && g[ny][nx] !== WATER) n++;
+        }
+      }
+      return n;
+    }
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        if (g[y][x] !== WATER && countLand(x, y) < 2) g[y][x] = WATER;
+      }
+    }
+
+    // 4. 湖：在陆地上随机挖 1~2 个小水塘
+    for (let l = 0; l < 2; l++) {
+      const lx = Math.floor(rand() * W), ly = Math.floor(rand() * H);
+      if (g[ly][lx] === GRASS) {
+        for (let dx = -1; dx <= 1; dx++) {
+          for (let dy = -1; dy <= 1; dy++) {
+            const nx = lx + dx, ny = ly + dy;
+            if (nx >= 0 && ny >= 0 && nx < W && ny < H && g[ny][nx] === GRASS && rand() < 0.8) {
+              g[ny][nx] = WATER;
+            }
+          }
+        }
+      }
+    }
+
+    // 5. 沙滩：靠海的陆地变成沙滩
+    function nearWater(x, y) {
+      for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+          const nx = x + dx, ny = y + dy;
+          if (nx >= 0 && ny >= 0 && nx < W && ny < H && g[ny][nx] === WATER) return true;
+        }
+      }
+      return false;
+    }
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        if (g[y][x] === GRASS && nearWater(x, y) && rand() < 0.7) g[y][x] = SAND;
+      }
+    }
+
+    // 6. 道路：画 1~2 条横路和 1~2 条竖路
+    const roadsH = 1 + Math.floor(rand() * 2);
+    const roadsV = 1 + Math.floor(rand() * 2);
+    for (let i = 0; i < roadsH; i++) {
+      const y = Math.floor(rand() * H);
+      for (let x = 0; x < W; x++) {
+        if (g[y][x] === GRASS || g[y][x] === SAND) g[y][x] = ROAD;
+      }
+    }
+    for (let i = 0; i < roadsV; i++) {
+      const x = Math.floor(rand() * W);
+      for (let y = 0; y < H; y++) {
+        if (g[y][x] === GRASS || g[y][x] === SAND) g[y][x] = ROAD;
+      }
+    }
+
+    // 7. 房子：路边的草地上随机盖房（每栋占 2 格：上面屋顶，下面墙）
+    const occupied = new Set(); // 记录被房子占掉的格子，防止重叠
+    for (let y = 0; y < H - 1; y++) {
+      for (let x = 0; x < W - 1; x++) {
+        const byRoad = g[y][x] === GRASS && (
+          g[y][x - 1] === ROAD || g[y][x + 1] === ROAD ||
+          g[y - 1][x] === ROAD || g[y + 1][x] === ROAD
+        );
+        if (byRoad && rand() < 0.5 && !occupied.has(y * W + x)) {
+          g[y][x] = HOUSE;
+          g[y + 1][x] = HOUSE;
+          occupied.add(y * W + x);
+          occupied.add((y + 1) * W + x);
+        }
+      }
+    }
+
+    // 8. 树：草地上随机种一点
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        if (g[y][x] === GRASS && rand() < 0.05) g[y][x] = TREE;
+      }
+    }
+
+    return g;
+  }
+
+  // ==========================================================
+  // 第二步：把地图画到 Canvas 上
+  // ==========================================================
+  function drawTown(g, seed) {
+    const cv = document.getElementById("town");
+    const ctx = cv.getContext("2d");
+    const rand = mulberry32(seed ^ 0x9E3779B9); // 换个种子来抖动颜色
+
+    // 给基础色加一点随机深浅（±vari 范围），像素画会更有质感
+    function shade(base, vari) {
+      const r = Math.max(0, Math.min(255, ((base >> 16) & 255) + Math.floor((rand() - 0.5) * 2 * vari)));
+      const gr = Math.max(0, Math.min(255, ((base >> 8) & 255) + Math.floor((rand() - 0.5) * 2 * vari)));
+      const b = Math.max(0, Math.min(255, (base & 255) + Math.floor((rand() - 0.5) * 2 * vari)));
+      return "rgb(" + r + "," + gr + "," + b + ")";
+    }
+
+    // 基础颜色（16 进制数字）
+    const C = {
+      water: 0x1b4d6e,
+      sand: 0xd9b26b,
+      grass: 0x5aa02c,
+      road: 0x8a8f98,
+      tree: 0x2e7d32,
+      house: 0xe8d9b8
+    };
+    // 屋顶配色盘：不同的房子不同颜色的屋顶
+    const roofs = [0xc0392b, 0x8e44ad, 0x2c3e50, 0xd35400, 0x16a085];
+    let roofIdx = 0;
+
+    // 一格一格涂色
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        const t = g[y][x];
+        let col = C.water;
+        if (t === SAND) col = shade(C.sand, 12);
+        else if (t === GRASS) col = shade(C.grass, 14);
+        else if (t === ROAD) col = shade(C.road, 6);
+        else if (t === TREE) col = shade(C.tree, 10);
+        else if (t === HOUSE) {
+          // 房子分上下两格：下面一格还是房子 → 这格是屋顶；否则是墙
+          const below = g[y + 1] ? g[y + 1][x] : WATER;
+          col = below === HOUSE ? roofs[roofIdx++ % roofs.length] : shade(C.house, 8);
+        }
+        ctx.fillStyle = col;
+        ctx.fillRect(x * TILE, y * TILE, TILE, TILE);
+      }
+    }
+
+    // 水面上撒一些亮点，像波纹
+    for (let i = 0; i < 60; i++) {
+      const x = Math.floor(rand() * W), y = Math.floor(rand() * H);
+      if (g[y][x] === WATER) {
+        ctx.fillStyle = "rgba(255,255,255,0.15)";
+        ctx.fillRect(x * TILE + 3, y * TILE + 3, 3, 3);
+      }
+    }
+  }
+
+  // ==========================================================
+  // 第三步：生成 / 还原 / 下载
+  // ==========================================================
+
+  function generate() {
+    const input = document.getElementById("seedInput");
+    // 输入框为空 → 随机一个编号；有编号 → 用它还原
+    let seed = parseInt(input.value, 10);
+    if (isNaN(seed)) seed = Math.floor(Math.random() * 1000000);
+    input.value = seed;
+
+    const g = makeMap(seed);
+    drawTown(g, seed);
+
+    document.getElementById("seedText").textContent =
+      "🏡 小镇编号：#" + seed + "　← 记下这个编号，以后输入它就能还原这座小镇";
+  }
+
+  function downloadTown() {
+    const cv = document.getElementById("town");
+    const a = document.createElement("a");
+    a.href = cv.toDataURL("image/png");
+    a.download = "pixel-town-" + document.getElementById("seedInput").value + ".png";
+    a.click();
+  }
+
+  // 打开页面时先生成一座小镇（不然画布是空的）
+  generate();
+  </script>
+</body>
+</html>

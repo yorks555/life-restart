@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>今日抽象运势</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html">🔄 重开人生</a>
+    <a href="fortune.html" class="active">🔮 今日运势</a>
+    <a href="pixel-town.html">🏘️ 像素小镇</a>
+  </nav>
+
+  <div class="container">
+    <h1 class="title">今日抽象运势</h1>
+    <p class="subtitle">玄学不保证准确，但保证抽象 🤪 同一天同一个你，结果固定——这就是命。</p>
+
+    <!-- 输入区 -->
+    <div class="card" style="text-align:center">
+      <div class="form-row">
+        <input id="nameInput" type="text" placeholder="你的名字（可选）" maxlength="12">
+        <select id="zodiacSelect">
+          <option value="白羊座">♈ 白羊座</option>
+          <option value="金牛座">♉ 金牛座</option>
+          <option value="双子座">♊ 双子座</option>
+          <option value="巨蟹座">♋ 巨蟹座</option>
+          <option value="狮子座">♌ 狮子座</option>
+          <option value="处女座">♍ 处女座</option>
+          <option value="天秤座">♎ 天秤座</option>
+          <option value="天蝎座">♏ 天蝎座</option>
+          <option value="射手座">♐ 射手座</option>
+          <option value="摩羯座">♑ 摩羯座</option>
+          <option value="水瓶座">♒ 水瓶座</option>
+          <option value="双鱼座">♓ 双鱼座</option>
+        </select>
+        <button class="btn gold" onclick="drawFortune()">🔮 抽今日运势</button>
+      </div>
+    </div>
+
+    <!-- 结果区（初始隐藏） -->
+    <div class="card fortune-card" id="resultBox" style="display:none">
+      <h2 id="fTitle">你的今日运势</h2>
+      <p class="fortune-date" id="fDate"></p>
+      <div id="fRows"></div>
+      <div class="lucky-list" id="fLucky"></div>
+      <div class="prophecy" id="fProp"></div>
+      <div class="btn-row">
+        <button class="btn gray" onclick="copyFortune()">📋 复制文案</button>
+        <button class="btn gold" onclick="downloadFortuneCard()">🖼️ 下载卡片</button>
+        <button class="btn" onclick="drawFortune(true)">🎲 换一签（改命）</button>
+      </div>
+    </div>
+
+    <footer>今日抽象运势 · 玄学不可信，快乐是真的</footer>
+  </div>
+
+  <script>
+  // ==========================================================
+  // 第一部分：文案数据（想改内容只改这里）
+  // ==========================================================
+
+  // 四大项运势的“抽象”点评
+  const COMMENTS = {
+    财运: [
+      "今天你的钱包会瘦，但灵魂会胖。",
+      "适合买彩票，但请做好为公益做贡献的准备。",
+      "财运如风，来得快去得也快，建议捂住口袋。",
+      "今天不适合投资，适合投资自己——比如买杯奶茶。"
+    ],
+    事业: [
+      "摸鱼一时爽，一直摸鱼一直爽，但老板在你背后。",
+      "适合开会时语出惊人，说完记得装淡定。",
+      "今天的工作像豆腐，越做越碎，能吃就行。",
+      "可能会被同事夸，也可能是被夸的同事。"
+    ],
+    爱情: [
+      "单身的朋友，今天适合主动，也适合主动放弃。",
+      "有对象的，今天适合说情话，说不出来就发红包。",
+      "今天你会遇到心动的人，也可能是心动的人遇到你。",
+      "爱情就像 Wi-Fi，信号满格时请珍惜。"
+    ],
+    健康: [
+      "今天适合早睡，但你可能不会。",
+      "多喝热水，这句话虽然敷衍但有用。",
+      "脖子疼的时候，请放下手机做套颈椎操。",
+      "今天的你，连呼吸都在消耗卡路里。"
+    ]
+  };
+
+  // 幸运色 / 幸运数字区间 / 幸运方位
+  const COLORS = ["五彩斑斓的黑", "透明色", "赛博绿", "落日橙", "高级雾霾蓝", "鸭屎绿", "极光紫", "出厂设置白"];
+  const DIRECTIONS = ["西北偏北 30°", "东南方向，靠近奶茶店", "窗边，光线最好处", "老板视线盲区", "冰箱旁 1 米内", "摸鱼区核心地带"];
+
+  // 宜 / 忌（都是抽象版）
+  const YI = ["发呆", "喝奶茶", "躺平", "假装努力", "点赞", "做梦"];
+  const JI = ["加班", "减肥", "早睡（你做不到）", "立 flag", "开会", "回忆往事"];
+
+  // 一句话预言
+  const PROPHECIES = [
+    "今天的你，是昨天的你 plus 一杯奶茶。",
+    "别问今天会不会好，问就是会（大概）。",
+    "你命里缺觉，但不缺奶茶。",
+    "今天适合低调，因为明天你可能会高调。",
+    "宇宙的尽头是铁岭，今天的尽头是下班。",
+    "如果今天有好事发生，那是我说的；没有也别怪我。",
+    "你以为是运气，其实是我在后台改的。"
+  ];
+
+  // ==========================================================
+  // 第二部分：种子随机数
+  // 重点：同样的“种子”会生成同样的随机序列。
+  // 所以我们用【名字+星座+日期】当种子 → 同一天结果固定，这就是“命”。
+  // “换一签”则用当前时间当种子 → 等于逆天改命 😂
+  // ==========================================================
+
+  // 根据种子生成一个随机函数，每次调用返回 0~1 的小数
+  function mulberry32(seed) {
+    return function () {
+      seed |= 0;
+      seed = (seed + 0x6D2B79F5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  // 把字符串变成数字（简单的字符串哈希）
+  function hashStr(s) {
+    let h = 1779033703;
+    for (let i = 0; i < s.length; i++) {
+      h = Math.imul(h ^ s.charCodeAt(i), 3432918353);
+      h = (h << 13) | (h >>> 19);
+    }
+    return h >>> 0;
+  }
+
+  // 今天的日期字符串，例如 "2025年1月1日"
+  function todayStr() {
+    const d = new Date();
+    return d.getFullYear() + "年" + (d.getMonth() + 1) + "月" + d.getDate() + "日";
+  }
+
+  // ==========================================================
+  // 第三部分：抽运势 + 渲染
+  // ==========================================================
+
+  let state = null; // 保存本次运势，供“复制/下载”使用
+
+  function drawFortune(changeFate) {
+    const name = document.getElementById("nameInput").value.trim() || "无名氏";
+    const zodiac = document.getElementById("zodiacSelect").value;
+
+    // 决定命运的种子
+    const seed = changeFate ? Date.now() : hashStr(name + zodiac + todayStr());
+    const rand = mulberry32(seed);
+
+    // 两个小工具函数（从 rand 里取值）
+    const score = (min, max) => min + Math.floor(rand() * (max - min + 1));
+    const pick = arr => arr[Math.floor(rand() * arr.length)];
+
+    // 生成四大项
+    const rows = ["财运", "事业", "爱情", "健康"].map(c => ({
+      name: c,
+      score: score(20, 99),
+      comment: pick(COMMENTS[c])
+    }));
+
+    // 生成其他玄学信息
+    state = {
+      name, zodiac, rows,
+      color: pick(COLORS),
+      num: score(1, 99),
+      dir: pick(DIRECTIONS),
+      yi: pick(YI),
+      ji: pick(JI),
+      prophecy: pick(PROPHECIES),
+      total: Math.round(rows.reduce((s, r) => s + r.score, 0) / rows.length),
+      date: todayStr()
+    };
+
+    // 标题 + 日期
+    document.getElementById("fTitle").textContent = "🔮 " + state.name + " 的今日运势（" + zodiac + "）";
+    document.getElementById("fDate").textContent = state.date + " · 综合运势 " + state.total + " 分";
+
+    // 四大项进度条（HTML 是拼出来的）
+    const EMOJI = { 财运: "💰", 事业: "💼", 爱情: "💘", 健康: "🏥" };
+    const rowsBox = document.getElementById("fRows");
+    rowsBox.innerHTML = "";
+    for (const r of state.rows) {
+      const div = document.createElement("div");
+      div.className = "frow";
+      div.innerHTML =
+        '<div class="fname">' + EMOJI[r.name] + " " + r.name + "</div>" +
+        '<div class="fbar"><div class="ffill" style="width:' + r.score + '%"></div></div>' +
+        '<div class="fscore">' + r.score + "</div>" +
+        '<div class="fcomment">' + r.comment + "</div>";
+      rowsBox.appendChild(div);
+    }
+
+    // 幸运信息 + 宜忌 + 预言
+    document.getElementById("fLucky").innerHTML =
+      "🍀 幸运色：" + state.color +
+      "　🔢 幸运数字：" + state.num +
+      "　🧭 幸运方位：" + state.dir +
+      "<br>✅ 宜：" + state.yi +
+      "　❌ 忌：" + state.ji;
+    document.getElementById("fProp").textContent = "🗣️ 今日预言：" + state.prophecy;
+
+    // 显示结果并滚动过去
+    document.getElementById("resultBox").style.display = "block";
+    document.getElementById("resultBox").scrollIntoView({ behavior: "smooth" });
+  }
+
+  // ==========================================================
+  // 第四部分：复制 / 下载
+  // ==========================================================
+
+  function copyFortune() {
+    if (!state) return;
+    const lines = ["🔮 今日抽象运势（" + state.name + " · " + state.zodiac + " · " + state.date + "）"];
+    for (const r of state.rows) {
+      lines.push("　" + r.name + " " + r.score + " 分：" + r.comment);
+    }
+    lines.push("综合运势 " + state.total + " 分");
+    lines.push("幸运色 " + state.color + " / 幸运数字 " + state.num + " / 幸运方位 " + state.dir);
+    lines.push("宜：" + state.yi + " / 忌：" + state.ji);
+    lines.push("今日预言：" + state.prophecy);
+    lines.push("—— 玄学不可信，快乐是真的 😂");
+    navigator.clipboard.writeText(lines.join("\n"))
+      .then(() => alert("✅ 运势文案已复制！"))
+      .catch(() => alert("复制失败，请手动复制：\n\n" + lines.join("\n")));
+  }
+
+  // 用 Canvas 画一张竖版卡片并下载
+  function downloadFortuneCard() {
+    if (!state) return;
+    const W = 640, H = 880;
+    const cv = document.createElement("canvas");
+    cv.width = W; cv.height = H;
+    const ctx = cv.getContext("2d");
+
+    // 背景渐变
+    const g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, "#0f0c29");
+    g.addColorStop(0.5, "#302b63");
+    g.addColorStop(1, "#24243e");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#ffd200";
+    ctx.font = "bold 34px 'Microsoft YaHei'";
+    ctx.fillText("🔮 今日抽象运势", 40, 70);
+
+    ctx.fillStyle = "#bbb";
+    ctx.font = "18px 'Microsoft YaHei'";
+    ctx.fillText(state.name + " · " + state.zodiac + " · " + state.date, 40, 110);
+
+    ctx.fillStyle = "#888";
+    ctx.font = "16px 'Microsoft YaHei'";
+    ctx.fillText("综合运势 " + state.total + " 分", 40, 140);
+
+    // 四大项：文字 + 进度条 + 分数 + 点评
+    const EMOJI = { 财运: "💰", 事业: "💼", 爱情: "💘", 健康: "🏥" };
+    let y = 190;
+    for (const r of state.rows) {
+      ctx.fillStyle = "#eee";
+      ctx.font = "20px 'Microsoft YaHei'";
+      ctx.fillText(EMOJI[r.name] + " " + r.name, 40, y + 16);
+
+      ctx.fillStyle = "rgba(255,255,255,.1)";
+      ctx.fillRect(170, y, 380, 22);
+      const grad = ctx.createLinearGradient(170, 0, 550, 0);
+      grad.addColorStop(0, "#00d2ff");
+      grad.addColorStop(1, "#3a7bd5");
+      ctx.fillStyle = grad;
+      ctx.fillRect(170, y, 380 * r.score / 100, 22);
+
+      ctx.fillStyle = "#ffd200";
+      ctx.font = "bold 18px 'Microsoft YaHei'";
+      ctx.fillText(String(r.score), 565, y + 17);
+
+      ctx.fillStyle = "#ccc";
+      ctx.font = "16px 'Microsoft YaHei'";
+      ctx.fillText(r.comment, 40, y + 48);
+      y += 72;
+    }
+
+    // 幸运信息 + 宜忌
+    y += 10;
+    ctx.fillStyle = "#eee";
+    ctx.font = "18px 'Microsoft YaHei'";
+    ctx.fillText("🍀 幸运色：" + state.color, 40, y);
+    ctx.fillText("🔢 幸运数字：" + state.num + "　🧭 幸运方位：" + state.dir, 40, y + 34);
+    ctx.fillText("✅ 宜：" + state.yi, 40, y + 68);
+    ctx.fillText("❌ 忌：" + state.ji, 40, y + 102);
+
+    // 预言框
+    ctx.fillStyle = "rgba(255,210,160,.12)";
+    ctx.fillRect(40, y + 130, 560, 70);
+    ctx.fillStyle = "#ffd2a0";
+    ctx.font = "18px 'Microsoft YaHei'";
+    ctx.fillText("🗣️ 今日预言：" + state.prophecy, 60, y + 172);
+
+    // 底部
+    ctx.fillStyle = "#888";
+    ctx.font = "15px 'Microsoft YaHei'";
+    ctx.fillText("—— 玄学不可信，快乐是真的 😂", 40, 850);
+
+    const a = document.createElement("a");
+    a.href = cv.toDataURL("image/png");
+    a.download = "今日运势.png";
+    a.click();
+  }
+  </script>
+</body>
+</html>
