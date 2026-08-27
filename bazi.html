@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>八字排盘</title>
+  <title>命运排盘 · 人生重启研究所</title>
   <meta name="description" content="输入出生日期与时辰，排出四柱八字、纳音五行、五行缺补与生肖冲合。玄学娱乐，开心就好。">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
@@ -11,16 +11,16 @@
 <body>
   <nav class="nav">
     <a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v9a1 1 0 01-1 1h-5v-6h-4v6H5a1 1 0 01-1-1z"/></svg>首页</a>
-    <a href="life.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-3-6.7"/><polyline points="21 4 21 9 16 9"/></svg>重开人生</a>
-    <a href="fortune.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>今日运势</a>
-    <a href="bazi.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21L8 9l4-6 4 6-4 12"/></svg>八字排盘</a>
-    <a href="qian.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="4" width="8" height="16" rx="2"/><path d="M11 8h2M11 12h2M11 16h2"/></svg>抽签祈福</a>
-    <a href="progress.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>人生进度条</a>
-    <a href="pixel-town.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V9l4-3v15M9 21V6l5-3v18M14 21V10l4 2v9"/></svg>像素小镇</a>
+    <a href="life.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-3-6.7"/><polyline points="21 4 21 9 16 9"/></svg>人生重开</a>
+    <a href="fortune.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>今日命运</a>
+    <a href="bazi.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21L8 9l4-6 4 6-4 12"/></svg>命运排盘</a>
+    <a href="qian.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="4" width="8" height="16" rx="2"/><path d="M11 8h2M11 12h2M11 16h2"/></svg>命运抽签</a>
+    <a href="progress.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>人生统计</a>
+    <a href="pixel-town.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V9l4-3v15M9 21V6l5-3v18M14 21V10l4 2v9"/></svg>平行世界</a>
   </nav>
 
   <div class="container">
-    <h1 class="title">八字排盘</h1>
+    <h1 class="title">命运排盘</h1>
     <p class="subtitle">输入出生日期与时辰，排出你的四柱八字（年 / 月 / 日 / 时柱）。纯属娱乐，命理仅供参考 😄</p>
 
     <!-- 输入区 -->
@@ -53,7 +53,7 @@
       </div>
     </div>
 
-    <footer>八字排盘 · 命理玄学，开心就好 · <a href="privacy.html" style="color:var(--muted)">隐私·免责</a></footer>
+    <footer>人生重启研究所 · 仅供娱乐 · <a href="privacy.html" style="color:var(--muted)">隐私·免责</a></footer>
   </div>
 
   <script src="js/lunar.js"></script>
@@ -63,7 +63,7 @@
   // 排八字
   function paiPan() {
     const dval = document.getElementById('birthDate').value;
-    if (!dval) { alert('请先选择出生日期'); return; }
+    if (!dval) { showToast('请先选择出生日期'); return; }
     const parts = dval.split('-');
     const y = +parts[0], m = +parts[1], d = +parts[2];
     const tval = document.getElementById('birthTime').value;
@@ -171,13 +171,14 @@
       '—— 命理玄学，开心就好 😄'
     ];
     navigator.clipboard.writeText(lines.join('\n'))
-      .then(() => alert('✅ 八字结果已复制！'))
-      .catch(() => alert('复制失败，请手动复制：\n\n' + lines.join('\n')));
+      .then(() => showToast('✅ 八字结果已复制！'))
+      .catch(() => showToast('复制失败，请手动复制：\n\n' + lines.join('\n')));
   }
   </script>
   <script src="js/store.js"></script>
   <script src="js/sfx.js"></script>
   <script src="js/pwa.js"></script>
+  <script src="js/ui.js"></script>
   <script>
   // 记住出生日期/时辰 + 排盘音效（数据仅存本地）
   window.addEventListener('load', function () {

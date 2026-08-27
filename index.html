@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>整活小站 · Life Restart</title>
-  <meta name="description" content="一个写着玩的玄学/整活小站：人生重开、抽象运势、八字排盘、抽签祈福、人生进度条、像素小镇。选一个模块开工！">
+  <title>人生重启研究所 · Life Restart</title>
+  <meta name="description" content="人生重启研究所：一个藏在互联网角落里的神秘人生模拟系统。人生重开、今日命运、命运排盘、命运抽签、人生统计、平行世界。仅供娱乐。">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -12,80 +12,97 @@
   <div class="container slim">
     <header class="hero">
       <p class="hero-emoji">🎐</p>
-      <h1 class="title">整活小站</h1>
-      <p class="subtitle">Life Restart · 选一个模块，开始整活</p>
+      <p class="eyebrow">Life Restart</p>
+      <h1 class="title title-grad">人生重启研究所</h1>
+      <p class="subtitle">你的第二人生，从这里开始。</p>
     </header>
 
-    <!-- 我的档案 -->
+    <!-- 我的档案（首页核心） -->
     <div class="card" style="text-align:center">
       <h2>🧧 我的档案</h2>
-      <div class="form-row">
-        <input id="pBirth" type="date">
+      <div id="profileShow"></div>
+      <div class="form-row" style="margin-top:12px">
+        <input id="pBirth" type="date" aria-label="出生日期">
         <button class="btn" onclick="saveProfile()">💾 保存档案</button>
       </div>
-      <p class="muted" style="margin-top:8px">填一次生日，首页常驻你的生肖 / 农历生日 / 人生进度（数据仅存本地）</p>
-      <div id="profileShow" style="margin-top:12px"></div>
+      <p class="muted" style="margin-top:10px">填一次生日，这里常驻你的命运档案（数据仅存本地）</p>
     </div>
 
+    <!-- 命运实验室 -->
+    <p class="section-title">命运实验室</p>
     <div class="mod-grid">
       <a class="mod-card" href="life.html">
         <span class="emoji">🔄</span>
-        <h3>人生重开模拟器</h3>
-        <p>随机投胎、五段人生、离谱结局</p>
+        <h3>人生重开</h3>
+        <p>随机投胎，五段人生，开启第二人生</p>
       </a>
       <a class="mod-card" href="fortune.html">
         <span class="emoji">🔮</span>
-        <h3>今日抽象运势</h3>
-        <p>每日运势 + 农历 / 生肖 / 节气</p>
+        <h3>今日命运</h3>
+        <p>每日运势 · 农历 / 生肖 / 节气</p>
       </a>
       <a class="mod-card" href="bazi.html">
         <span class="emoji">🧧</span>
-        <h3>八字排盘</h3>
-        <p>排四柱、纳音五行、生肖冲合</p>
+        <h3>命运排盘</h3>
+        <p>四柱八字 · 纳音 · 五行缺补</p>
       </a>
       <a class="mod-card" href="qian.html">
         <span class="emoji">🎋</span>
-        <h3>抽签祈福</h3>
-        <p>求一支签，看看老天怎么说</p>
+        <h3>命运抽签</h3>
+        <p>求一支签，看看命运怎么说</p>
       </a>
       <a class="mod-card" href="progress.html">
         <span class="emoji">🪙</span>
-        <h3>人生进度条</h3>
-        <p>看看人生已经走到哪了</p>
+        <h3>人生统计</h3>
+        <p>看看你的人生已经走到哪</p>
       </a>
       <a class="mod-card" href="pixel-town.html">
         <span class="emoji">🏘️</span>
-        <h3>像素小镇生成器</h3>
-        <p>生成一座独一无二的小镇</p>
+        <h3>平行世界</h3>
+        <p>生成一座独一无二的像素小镇</p>
       </a>
     </div>
 
-    <footer>整活小站 · 纯属娱乐，开心就好 · <a href="privacy.html" style="color:var(--muted)">隐私·免责</a></footer>
+    <footer>人生重启研究所 · 纯属娱乐 · <a href="privacy.html">隐私·免责</a></footer>
   </div>
+
   <script src="js/lunar.js"></script>
   <script src="js/store.js"></script>
   <script src="js/sfx.js"></script>
+  <script src="js/ui.js"></script>
   <script>
   function saveProfile() {
     const dval = document.getElementById('pBirth').value;
-    if (!dval) { alert('请先选择出生日期'); return; }
+    if (!dval) { showToast('请先选择出生日期'); return; }
     playSfx('good');
     Store.set('profile', dval);
     renderProfile();
+    showToast('档案已保存');
+  }
+  function statBox(emoji, name, val) {
+    return '<div class="attr"><span class="emoji">' + emoji + '</span><div class="name">' + name + '</div><div class="val">' + val + '</div></div>';
   }
   function renderProfile() {
     const box = document.getElementById('profileShow');
     const dval = Store.get('profile', null);
-    if (!dval) { box.innerHTML = '<span class="muted">保存后这里会显示你的生肖与人生进度。</span>'; return; }
+    if (!dval) {
+      box.innerHTML = '<p class="muted">尚未建档 —— 保存出生日期后，这里会显示你的生肖、农历生日、运行天数与人生进度。</p>';
+      return;
+    }
     const parts = dval.split('-'); const y = +parts[0], m = +parts[1], d = +parts[2];
     const lun = window.lunar.lunarDate(y, m, d);
     const birth = new Date(y, m - 1, d), now = new Date();
     const ageDays = Math.floor((now - birth) / 86400000);
     const pct = Math.min(100, ageDays / (80 * 365.25) * 100);
     box.innerHTML =
-      '🐉 生肖 <b style="color:var(--accent)">' + lun.zodiac + '</b>　·　🎂 农历 <b style="color:var(--accent)">' + lun.monthCn + lun.dayCn +
-      '</b>　·　🪙 人生进度 <b style="color:var(--accent)">' + pct.toFixed(1) + '%</b>' +
-      '<div class="progress-track" style="margin-top:10px"><div class="progress-fill" style="width:' + pct.toFixed(1) + '%"><span class="dot"></span></div></div>';
+      '<p class="muted">出生日期 ' + y + '年' + m + '月' + d + '日</p>' +
+      '<div class="attrs" style="margin-top:12px">' +
+        statBox('🐉', '生肖', lun.zodiac) +
+        statBox('🎂', '农历生日', lun.monthCn + lun.dayCn) +
+        statBox('📅', '运行天数', ageDays.toLocaleString() + ' 天') +
+        statBox('🪙', '人生进度', pct.toFixed(1) + '%') +
+      '</div>' +
+      '<div class="progress-track" style="margin-top:14px"><div class="progress-fill" style="width:' + pct.toFixed(1) + '%"><span class="dot"></span></div></div>';
   }
   renderProfile();
   </script>
