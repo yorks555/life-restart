@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>今日命运 · 人生重启研究所</title>
-  <meta name="description" content="输入名字和星座，生成今日抽象运势，带农历/生肖/节气。同一天同一人结果固定，也能换个签改命。玄学娱乐。">
+  <meta name="description" content="输入名字和星座，生成今日命运报告，带农历/生肖/节气。同一天同一人结果固定，也能换个签改命。玄学娱乐。">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -49,13 +49,13 @@
           <option value="水瓶座">♒ 水瓶座</option>
           <option value="双鱼座">♓ 双鱼座</option>
         </select>
-        <button class="btn gold" onclick="drawFortune()">🔮 抽今日运势</button>
+        <button class="btn gold" onclick="drawFortune()">🔮 生成今日命运</button>
       </div>
     </div>
 
     <!-- 结果区（初始隐藏） -->
     <div class="card fortune-card" id="resultBox" style="display:none">
-      <h2 id="fTitle">你的今日运势</h2>
+      <h2 id="fTitle">你的今日命运</h2>
       <p class="fortune-date" id="fDate"></p>
       <div id="fRows"></div>
       <div class="lucky-list" id="fLucky"></div>
@@ -79,28 +79,28 @@
   // 四大项运势的“抽象”点评
   const COMMENTS = {
     财运: [
-      "今天你的钱包会瘦，但灵魂会胖。",
-      "适合买彩票，但请做好为公益做贡献的准备。",
-      "财运如风，来得快去得也快，建议捂住口袋。",
-      "今天不适合投资，适合投资自己——比如买杯奶茶。"
+      "今日财库水位平稳，适合积累，别手滑点开购物车。",
+      "偏财运微弱闪烁，中奖概率约等于命运开个小差。",
+      "财富如潮汐，来得快去得也快，建议先捂住口袋。",
+      "不宜盲目投资，宜投资自己——比如补个觉、吃顿好的。"
     ],
     事业: [
-      "摸鱼一时爽，一直摸鱼一直爽，但老板在你背后。",
-      "适合开会时语出惊人，说完记得装淡定。",
-      "今天的工作像豆腐，越做越碎，能吃就行。",
-      "可能会被同事夸，也可能是被夸的同事。"
+      "系统检测到你正在摸鱼，请把窗口切回工作台。",
+      "适合开会时语出惊人，说完记得假装一切尽在掌握。",
+      "今日产出如涓涓细流，能交差就算赢。",
+      "可能被委以重任，也可能被当工具人，全看命运随机。"
     ],
     爱情: [
-      "单身的朋友，今天适合主动，也适合主动放弃。",
-      "有对象的，今天适合说情话，说不出来就发红包。",
-      "今天你会遇到心动的人，也可能是心动的人遇到你。",
-      "爱情就像 Wi-Fi，信号满格时请珍惜。"
+      "单身样本：今日约有 3% 概率遇见心动对象，其余时间请自娱自乐。",
+      "恋爱中的你，今天适合说点真话，或直接发个红包。",
+      "缘分信号满格，请珍惜眼前人。",
+      "所谓心动，可能是爱情，也可能只是饿了。"
     ],
     健康: [
-      "今天适合早睡，但你可能不会。",
-      "多喝热水，这句话虽然敷衍但有用。",
-      "脖子疼的时候，请放下手机做套颈椎操。",
-      "今天的你，连呼吸都在消耗卡路里。"
+      "今日建议早睡，虽然大概率做不到。",
+      "多喝热水——这句敷衍，但真有用。",
+      "颈椎正在求救，请抬头活动一下。",
+      "身体是长期资产，别为一时透支。"
     ]
   };
 
@@ -114,13 +114,13 @@
 
   // 一句话预言
   const PROPHECIES = [
-    "今天的你，是昨天的你 plus 一杯奶茶。",
+    "今日的你，是昨天的你 plus 一杯咖啡因。",
     "别问今天会不会好，问就是会（大概）。",
-    "你命里缺觉，但不缺奶茶。",
-    "今天适合低调，因为明天你可能会高调。",
-    "宇宙的尽头是铁岭，今天的尽头是下班。",
+    "命运系统提示：你已进入好运缓冲期。",
+    "低调行事，因为明天你可能会高调。",
+    "宇宙的尽头是下班，今天的尽头也是。",
     "如果今天有好事发生，那是我说的；没有也别怪我。",
-    "你以为是运气，其实是我在后台改的。"
+    "你以为的巧合，其实是命运在后台悄悄改参数。"
   ];
 
   // ==========================================================
@@ -220,9 +220,9 @@
     };
 
     // 标题 + 日期
-    document.getElementById("fTitle").textContent = "🔮 " + state.name + " 的今日运势（" + zodiac + "）";
+    document.getElementById("fTitle").textContent = "🔮 " + state.name + " 的今日命运（" + zodiac + "）";
     document.getElementById("fDate").textContent =
-      todayLunarStr() + " · " + state.date + " · 综合运势 " + state.total + " 分";
+      todayLunarStr() + " · " + state.date + " · 综合命势 " + state.total + " 分";
 
     // 四大项进度条（HTML 是拼出来的）
     const EMOJI = { 财运: "💰", 事业: "💼", 爱情: "💘", 健康: "🏥" };
@@ -259,11 +259,11 @@
 
   function copyFortune() {
     if (!state) return;
-    const lines = ["🔮 今日抽象运势（" + state.name + " · " + state.zodiac + " · " + state.date + "）"];
+    const lines = ["🔮 今日命运报告（" + state.name + " · " + state.zodiac + " · " + state.date + "）"];
     for (const r of state.rows) {
       lines.push("　" + r.name + " " + r.score + " 分：" + r.comment);
     }
-    lines.push("综合运势 " + state.total + " 分");
+    lines.push("综合命势 " + state.total + " 分");
     lines.push("幸运色 " + state.color + " / 幸运数字 " + state.num + " / 幸运方位 " + state.dir);
     lines.push("宜：" + state.yi + " / 忌：" + state.ji);
     lines.push("今日预言：" + state.prophecy);
@@ -292,7 +292,7 @@
     ctx.textAlign = "left";
     ctx.fillStyle = "#ffd200";
     ctx.font = "bold 34px 'Microsoft YaHei'";
-    ctx.fillText("🔮 今日抽象运势", 40, 70);
+    ctx.fillText("🔮 今日命运报告", 40, 70);
 
     ctx.fillStyle = "#bbb";
     ctx.font = "18px 'Microsoft YaHei'";
@@ -300,7 +300,7 @@
 
     ctx.fillStyle = "#888";
     ctx.font = "16px 'Microsoft YaHei'";
-    ctx.fillText("综合运势 " + state.total + " 分", 40, 140);
+    ctx.fillText("综合命势 " + state.total + " 分", 40, 140);
 
     // 四大项：文字 + 进度条 + 分数 + 点评
     const EMOJI = { 财运: "💰", 事业: "💼", 爱情: "💘", 健康: "🏥" };
