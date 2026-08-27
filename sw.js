@@ -1,10 +1,10 @@
 // Service Worker：缓存核心资源，实现离线可用 + 可安装到桌面
-const CACHE = 'life-restart-v1';
+const CACHE = 'life-restart-v2';
 const ASSETS = [
   'index.html', 'life.html', 'fortune.html', 'bazi.html', 'qian.html',
   'progress.html', 'pixel-town.html', 'privacy.html',
   'css/style.css', 'js/lunar.js', 'js/store.js', 'js/sfx.js', 'js/pwa.js',
-  'favicon.svg', 'manifest.json'
+  'favicon.svg', 'manifest.json', 'icon-192.png', 'icon-512.png'
 ];
 
 self.addEventListener('install', e => {
