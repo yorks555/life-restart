@@ -10,13 +10,13 @@
 </head>
 <body>
   <nav class="nav">
-    <a href="index.html">🏠 首页</a>
-    <a href="life.html">🔄 重开人生</a>
-    <a href="fortune.html" class="active">🔮 今日运势</a>
-    <a href="bazi.html">🧧 八字排盘</a>
-    <a href="qian.html">🎋 抽签祈福</a>
-    <a href="progress.html">🪙 人生进度条</a>
-    <a href="pixel-town.html">🏘️ 像素小镇</a>
+    <a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v9a1 1 0 01-1 1h-5v-6h-4v6H5a1 1 0 01-1-1z"/></svg>首页</a>
+    <a href="life.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-3-6.7"/><polyline points="21 4 21 9 16 9"/></svg>重开人生</a>
+    <a href="fortune.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>今日运势</a>
+    <a href="bazi.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21L8 9l4-6 4 6-4 12"/></svg>八字排盘</a>
+    <a href="qian.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="4" width="8" height="16" rx="2"/><path d="M11 8h2M11 12h2M11 16h2"/></svg>抽签祈福</a>
+    <a href="progress.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>人生进度条</a>
+    <a href="pixel-town.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V9l4-3v15M9 21V6l5-3v18M14 21V10l4 2v9"/></svg>像素小镇</a>
   </nav>
 
   <div class="container">
@@ -61,13 +61,13 @@
       <div class="lucky-list" id="fLucky"></div>
       <div class="prophecy" id="fProp"></div>
       <div class="btn-row">
-        <button class="btn gray" onclick="copyFortune()">📋 复制文案</button>
-        <button class="btn gold" onclick="downloadFortuneCard()">🖼️ 下载卡片</button>
+        <button class="btn" onclick="copyFortune()">📋 复制文案</button>
+        <button class="btn ghost" onclick="downloadFortuneCard()">🖼️ 下载卡片</button>
         <button class="btn" onclick="drawFortune(true)">🎲 换一签（改命）</button>
       </div>
     </div>
 
-    <footer>今日抽象运势 · 玄学不可信，快乐是真的</footer>
+    <footer>今日抽象运势 · 玄学不可信，快乐是真的 · <a href="privacy.html" style="color:var(--muted)">隐私·免责</a></footer>
   </div>
 
   <script src="js/lunar.js"></script>
@@ -354,6 +354,20 @@
     a.download = "今日运势.png";
     a.click();
   }
+  </script>
+  <script src="js/store.js"></script>
+  <script src="js/sfx.js"></script>
+  <script src="js/pwa.js"></script>
+  <script>
+  // 记住名字与星座 + 抽运势音效（数据仅存本地）
+  window.addEventListener('load', function () {
+    var v = Store.get('fortune_input', null);
+    var name = document.getElementById('nameInput'), zodiac = document.getElementById('zodiacSelect');
+    if (v) { name.value = v.name || ''; zodiac.value = v.zodiac || '白羊座'; }
+    name.addEventListener('input', save); zodiac.addEventListener('change', save);
+    function save() { Store.set('fortune_input', { name: name.value.trim(), zodiac: zodiac.value }); }
+    var btn = document.querySelector('.form-row .btn'); if (btn) btn.addEventListener('click', function () { playSfx('good'); });
+  });
   </script>
 </body>
 </html>

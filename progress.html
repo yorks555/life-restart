@@ -10,27 +10,27 @@
 </head>
 <body>
   <nav class="nav">
-    <a href="index.html">🏠 首页</a>
-    <a href="life.html">🔄 重开人生</a>
-    <a href="fortune.html">🔮 今日运势</a>
-    <a href="bazi.html">🧧 八字排盘</a>
-    <a href="qian.html">🎋 抽签祈福</a>
-    <a href="progress.html" class="active">🪙 人生进度条</a>
-    <a href="pixel-town.html">🏘️ 像素小镇</a>
+    <a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v9a1 1 0 01-1 1h-5v-6h-4v6H5a1 1 0 01-1-1z"/></svg>首页</a>
+    <a href="life.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-3-6.7"/><polyline points="21 4 21 9 16 9"/></svg>重开人生</a>
+    <a href="fortune.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>今日运势</a>
+    <a href="bazi.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21L8 9l4-6 4 6-4 12"/></svg>八字排盘</a>
+    <a href="qian.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="4" width="8" height="16" rx="2"/><path d="M11 8h2M11 12h2M11 16h2"/></svg>抽签祈福</a>
+    <a href="progress.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>人生进度条</a>
+    <a href="pixel-town.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V9l4-3v15M9 21V6l5-3v18M14 21V10l4 2v9"/></svg>像素小镇</a>
   </nav>
 
   <div class="container">
-    <h1 class="title">人生进度条</h1>
+    <h1 class="title title-grad">人生进度条</h1>
     <p class="subtitle">你的人生已经走到哪了？看看进度，配一句调侃 🪙</p>
 
     <!-- 输入区 -->
-    <div class="card" style="text-align:center">
+    <div class="card">
       <div class="form-row">
         <input id="birthDate" type="date">
         <input id="lifeSpan" type="number" placeholder="预期寿命(默认80)" min="1" max="120">
         <button class="btn" onclick="calProgress()">🪙 算进度</button>
       </div>
-      <p class="muted" style="margin-top:10px">出生日期必填；预期寿命留空按 80 岁算</p>
+      <p class="muted" style="text-align:center; margin-top:10px">出生日期必填；预期寿命留空按 80 岁算</p>
     </div>
 
     <!-- 结果区（初始隐藏） -->
@@ -38,19 +38,21 @@
       <h2 id="pTitle">你的人生进度</h2>
       <p class="fortune-date" id="pSub"></p>
 
-      <p class="progress-num" id="pPercent">--%</p>
-      <div class="progress-bar"><div class="progress-fill" id="pFill" style="width:0%"></div></div>
+      <p class="progress-num" id="pPercent">0%</p>
 
-      <p class="lucky-list" id="pStats" style="text-align:center"></p>
-      <p class="prophecy" id="pSay"></p>
+      <div class="progress-track"><div class="progress-fill" id="pFill" style="width:0%"><span class="dot"></span></div></div>
+
+      <div class="progress-tags" id="pTags"></div>
+
+      <p class="progress-say warm-grad" id="pSay"></p>
 
       <div class="btn-row">
-        <button class="btn gray" onclick="copyProgress()">📋 复制文案</button>
-        <button class="btn gold" onclick="downloadProgress()">🖼️ 下载卡片</button>
+        <button class="btn" onclick="copyProgress()">📋 复制文案</button>
+        <button class="btn ghost" onclick="downloadProgress()">🖼️ 下载卡片</button>
       </div>
     </div>
 
-    <footer>人生进度条 · 走到哪算哪，开心就好</footer>
+    <footer>人生进度条 · 走到哪算哪，开心就好 · <a href="privacy.html" style="color:var(--muted)">隐私·免责</a></footer>
   </div>
 
   <script src="js/lunar.js"></script>
@@ -77,19 +79,52 @@
     const lun = window.lunar.lunarDate(y, m, d);
     lastData = { y, m, d, lifeYears, ageDays, percent, ageYears, remainDays, lun, zodiac: lun.zodiac };
 
-    document.getElementById('pTitle').textContent = '🪙 ' + (lifeYears) + ' 岁人生的进度';
-    document.getElementById('pPercent').textContent = percent.toFixed(1) + '%';
-    document.getElementById('pFill').style.width = percent.toFixed(1) + '%';
-
-    const say = agePhrase(ageYears);
+    document.getElementById('pTitle').textContent = '🪙 ' + lifeYears + ' 岁人生的进度';
     document.getElementById('pSub').textContent =
       y + '年' + m + '月' + d + '日 · 农历' + lun.monthCn + lun.dayCn + ' · 生肖 ' + lun.zodiac;
-    document.getElementById('pStats').innerHTML =
-      '已走过 <b style="color:var(--accent)">' + ageDays.toLocaleString() + '</b> 天　·　还剩 <b style="color:var(--accent)">' + remainDays.toLocaleString() + '</b> 天　·　人生的 <b style="color:var(--accent)">' + percent.toFixed(1) + '%</b> 已经用完';
-    document.getElementById('pSay').textContent = '🗣️ ' + say;
+
+    // 数字跳动 + 渐变进度条 + 末点
+    countUp(document.getElementById('pPercent'), percent, 1);
+    const fill = document.getElementById('pFill');
+    fill.style.width = '0%';
+    requestAnimationFrame(() => { fill.style.width = percent.toFixed(1) + '%'; });
+
+    // 彩色标签：过去 / 未来
+    document.getElementById('pTags').innerHTML =
+      '<span class="tag tag-past">✅ 已走过 ' + ageDays.toLocaleString() + ' 天</span>' +
+      '<span class="tag tag-future">⏳ 还剩 ' + remainDays.toLocaleString() + ' 天</span>';
+
+    // 打字机文案（暖色渐变）
+    typewrite(document.getElementById('pSay'), '「' + agePhrase(ageYears) + '」', 55);
 
     document.getElementById('resultBox').style.display = 'block';
     document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // 数字从 0 跳到目标值
+  function countUp(el, target, decimals) {
+    const dur = 1200, t0 = performance.now();
+    function step(t) {
+      const k = Math.min(1, (t - t0) / dur);
+      const eased = 1 - Math.pow(1 - k, 3);
+      el.textContent = (target * eased).toFixed(decimals) + '%';
+      if (k < 1) requestAnimationFrame(step);
+      else el.textContent = target.toFixed(decimals) + '%';
+    }
+    requestAnimationFrame(step);
+  }
+
+  // 打字机逐字出现
+  function typewrite(el, text, speed) {
+    el.textContent = '';
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    el.appendChild(cursor);
+    let i = 0;
+    function tick() {
+      if (i < text.length) { cursor.insertAdjacentText('beforebegin', text[i]); i++; setTimeout(tick, speed); }
+    }
+    tick();
   }
 
   function agePhrase(age) {
@@ -124,36 +159,41 @@
     cv.width = W; cv.height = H;
     const ctx = cv.getContext('2d');
     const g = ctx.createLinearGradient(0, 0, W, H);
-    g.addColorStop(0, '#faf6ee'); g.addColorStop(1, '#f3ecdd');
+    g.addColorStop(0, '#0d1a2b'); g.addColorStop(1, '#152a3d');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#3d3527';
+    ctx.fillStyle = '#e6edf5';
     ctx.font = 'bold 30px "Microsoft YaHei"';
     ctx.fillText('🪙 人生进度条', W / 2, 70);
 
-    ctx.fillStyle = '#9c9077';
+    ctx.fillStyle = '#8ca0ba';
     ctx.font = '18px "Microsoft YaHei"';
     ctx.fillText(lastData.y + '年' + lastData.m + '月' + lastData.d + '日出生 · 预期 ' + lastData.lifeYears + ' 岁', W / 2, 115);
 
-    ctx.fillStyle = '#e8823a';
+    ctx.fillStyle = '#5eead4';
     ctx.font = 'bold 64px "Microsoft YaHei"';
     ctx.fillText(lastData.percent.toFixed(1) + '%', W / 2, 210);
 
-    // 进度条
+    // 渐变进度条 + 末点
     const bx = 80, by = 240, bw = W - 160, bh = 22;
-    ctx.fillStyle = '#e9e0cd'; ctx.fillRect(bx, by, bw, bh);
-    ctx.fillStyle = '#e8823a'; ctx.fillRect(bx, by, bw * lastData.percent / 100, bh);
+    ctx.fillStyle = '#1d3350'; ctx.fillRect(bx, by, bw, bh);
+    const grad = ctx.createLinearGradient(bx, 0, bx + bw, 0);
+    grad.addColorStop(0, '#5eead4'); grad.addColorStop(1, '#a78bfa');
+    ctx.fillStyle = grad; ctx.fillRect(bx, by, bw * lastData.percent / 100, bh);
+    const dx = bx + bw * lastData.percent / 100;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(dx, by + bh / 2, 7, 0, Math.PI * 2); ctx.fill();
 
-    ctx.fillStyle = '#3d3527';
+    ctx.fillStyle = '#e6edf5';
     ctx.font = '20px "Microsoft YaHei"';
     ctx.fillText('已过 ' + lastData.ageDays.toLocaleString() + ' 天 · 还剩 ' + lastData.remainDays.toLocaleString() + ' 天', W / 2, 310);
 
-    ctx.fillStyle = '#6c6350';
+    ctx.fillStyle = '#f5a623';
     ctx.font = '20px "Microsoft YaHei"';
     ctx.fillText('『' + agePhrase(lastData.ageYears) + '』', W / 2, 380);
 
-    ctx.fillStyle = '#b3a88f';
+    ctx.fillStyle = '#5f7089';
     ctx.font = '16px "Microsoft YaHei"';
     ctx.fillText('—— 人生进度条，纯属娱乐 😄', W / 2, 470);
 
@@ -162,6 +202,20 @@
     a.download = '人生进度-' + lastData.y + '.png';
     a.click();
   }
+  </script>
+  <script src="js/store.js"></script>
+  <script src="js/sfx.js"></script>
+  <script src="js/pwa.js"></script>
+  <script>
+  // 记住出生日期/预期寿命 + 算进度音效（数据仅存本地）
+  window.addEventListener('load', function () {
+    var d = document.getElementById('birthDate'), s = document.getElementById('lifeSpan');
+    var v = Store.get('progress_input', null);
+    if (v && d) { if (v.date) d.value = v.date; if (s && v.span) s.value = v.span; }
+    d.addEventListener('change', save); if (s) s.addEventListener('input', save);
+    function save() { Store.set('progress_input', { date: d.value, span: s.value }); }
+    var btn = document.querySelector('.form-row .btn'); if (btn) btn.addEventListener('click', function () { playSfx('good'); });
+  });
   </script>
 </body>
 </html>

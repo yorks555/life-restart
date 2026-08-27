@@ -16,6 +16,17 @@
       <p class="subtitle">Life Restart · 选一个模块，开始整活</p>
     </header>
 
+    <!-- 我的档案 -->
+    <div class="card" style="text-align:center">
+      <h2>🧧 我的档案</h2>
+      <div class="form-row">
+        <input id="pBirth" type="date">
+        <button class="btn" onclick="saveProfile()">💾 保存档案</button>
+      </div>
+      <p class="muted" style="margin-top:8px">填一次生日，首页常驻你的生肖 / 农历生日 / 人生进度（数据仅存本地）</p>
+      <div id="profileShow" style="margin-top:12px"></div>
+    </div>
+
     <div class="mod-grid">
       <a class="mod-card" href="life.html">
         <span class="emoji">🔄</span>
@@ -49,7 +60,35 @@
       </a>
     </div>
 
-    <footer>整活小站 · 纯属娱乐，开心就好</footer>
+    <footer>整活小站 · 纯属娱乐，开心就好 · <a href="privacy.html" style="color:var(--muted)">隐私·免责</a></footer>
   </div>
+  <script src="js/lunar.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/sfx.js"></script>
+  <script>
+  function saveProfile() {
+    const dval = document.getElementById('pBirth').value;
+    if (!dval) { alert('请先选择出生日期'); return; }
+    playSfx('good');
+    Store.set('profile', dval);
+    renderProfile();
+  }
+  function renderProfile() {
+    const box = document.getElementById('profileShow');
+    const dval = Store.get('profile', null);
+    if (!dval) { box.innerHTML = '<span class="muted">保存后这里会显示你的生肖与人生进度。</span>'; return; }
+    const parts = dval.split('-'); const y = +parts[0], m = +parts[1], d = +parts[2];
+    const lun = window.lunar.lunarDate(y, m, d);
+    const birth = new Date(y, m - 1, d), now = new Date();
+    const ageDays = Math.floor((now - birth) / 86400000);
+    const pct = Math.min(100, ageDays / (80 * 365.25) * 100);
+    box.innerHTML =
+      '🐉 生肖 <b style="color:var(--accent)">' + lun.zodiac + '</b>　·　🎂 农历 <b style="color:var(--accent)">' + lun.monthCn + lun.dayCn +
+      '</b>　·　🪙 人生进度 <b style="color:var(--accent)">' + pct.toFixed(1) + '%</b>' +
+      '<div class="progress-track" style="margin-top:10px"><div class="progress-fill" style="width:' + pct.toFixed(1) + '%"><span class="dot"></span></div></div>';
+  }
+  renderProfile();
+  </script>
+  <script src="js/pwa.js"></script>
 </body>
 </html>
