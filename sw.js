@@ -1,9 +1,9 @@
 // Service Worker：缓存核心资源，实现离线可用 + 可安装到桌面
-const CACHE = 'life-restart-v2';
+const CACHE = 'life-restart-v3';
 const ASSETS = [
   'index.html', 'life.html', 'fortune.html', 'bazi.html', 'qian.html',
   'progress.html', 'pixel-town.html', 'privacy.html',
-  'css/style.css', 'js/lunar.js', 'js/store.js', 'js/sfx.js', 'js/pwa.js',
+  'css/style.css', 'js/lunar.js', 'js/store.js', 'js/sfx.js', 'js/pwa.js', 'js/ui.js',
   'favicon.svg', 'manifest.json', 'icon-192.png', 'icon-512.png'
 ];
 
@@ -17,7 +17,15 @@ self.addEventListener('activate', e => {
   ).then(() => self.clients.claim()));
 });
 
-// 缓存优先，命中直接返回；未命中再请求网络
+// 网络优先：在线时永远取最新；离线时回退到缓存（这样更新后手机能看到新版）
 self.addEventListener('fetch', e => {
-  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+  e.respondWith(
+    fetch(e.request)
+      .then(res => {
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, copy));
+        return res;
+      })
+      .catch(() => caches.match(e.request))
+  );
 });
