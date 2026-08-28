@@ -26,6 +26,9 @@
   --warning: #F5A623;
   --danger: #F26D6D;
 
+  /* App 宽度：桌面端内容与底部导航同宽居中 */
+  --app-w: 520px;
+
   /* 兼容旧变量（同义映射，避免破坏既有页面） */
   --accent: var(--primary);
   --accent-strong: #5A51F0;
@@ -57,7 +60,7 @@ body {
 }
 
 /* ---------- App 壳 ---------- */
-.app { max-width: 480px; margin: 0 auto; padding: 0 18px; }
+.app { max-width: var(--app-w); margin: 0 auto; padding: 0 18px; }
 .app.wide { max-width: 640px; }
 .hidden { display: none !important; }
 
@@ -117,11 +120,14 @@ body {
 
 /* 底部 Tab 栏 */
 .tabbar {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+  position: fixed; left: 0; right: 0; bottom: 12px; z-index: 50;
+  margin: 0 auto; max-width: var(--app-w);
   display: flex; justify-content: space-around; align-items: center;
-  background: rgba(255,255,255,.92); backdrop-filter: blur(8px);
-  border-top: 1px solid var(--border);
-  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+  background: rgba(255,255,255,.94); backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: 0 10px 26px rgba(32,35,51,.12);
+  padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
 }
 .tabbar a {
   text-decoration: none; color: var(--muted);
@@ -279,7 +285,7 @@ footer { text-align: center; color: #A8AEC0; font-size: .8em; margin-top: 28px; 
 footer a { color: var(--muted); }
 
 /* 通用标题（模块页） */
-.container { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+.container { max-width: var(--app-w); margin: 0 auto; padding: 0 16px; }
 h1.title { text-align: center; font-size: 1.6em; font-weight: 700; margin: 14px 0 4px; color: var(--text); }
 .subtitle { text-align: center; color: var(--muted); margin-bottom: 18px; font-size: .9em; }
 .title-grad { background: linear-gradient(92deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
