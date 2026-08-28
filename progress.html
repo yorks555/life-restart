@@ -43,6 +43,7 @@
       <div class="progress-track"><div class="progress-fill" id="pFill" style="width:0%"><span class="dot"></span></div></div>
 
       <div class="progress-tags" id="pTags"></div>
+      <p class="muted" style="margin-top:12px; text-align:center">恭喜，目前还没有活成 NPC。😄</p>
 
       <p class="progress-say warm-grad" id="pSay"></p>
 
@@ -128,13 +129,13 @@
   }
 
   function agePhrase(age) {
-    if (age < 18) return '命运刚开局，新手教程加载中，未来无限可能。';
-    if (age < 26) return '正是折腾的好时候，去犯错、去体验、去长成大人。';
-    if (age < 36) return '开始读懂了人生的说明书，但也别把自己累垮。';
+    if (age < 18) return '新手教程加载中，未来全是隐藏关卡。';
+    if (age < 26) return '正在升级打怪，去犯错、去体验、去长大。';
+    if (age < 36) return '主线任务进行中，但也别把自己刷爆。';
     if (age < 46) return '上有老下有小，稳住，你比想象中更强。';
-    if (age < 60) return '看淡了许多，是时候对自己好一点了。';
-    if (age < 75) return '进入人生下半场，享受生活，感恩每一步。';
-    return '人生赢家本家，剩下的每一天都是赚的。';
+    if (age < 60) return '支线任务清得差不多了，对自己好一点。';
+    if (age < 75) return '进入人生下半场，享受游戏，感恩每一步。';
+    return '恭喜通关主线，剩下的都是 DLC。';
   }
 
   function copyProgress() {
@@ -218,5 +219,12 @@
     var btn = document.querySelector('.form-row .btn'); if (btn) btn.addEventListener('click', function () { playSfx('good'); });
   });
   </script>
+  <!-- 底部 Tab -->
+  <nav class="tabbar">
+    <a href="index.html"><span class="ic">🏠</span><span>首页</span></a>
+    <a href="index.html#tujian"><span class="ic">📖</span><span>图鉴</span></a>
+    <a class="tab-center" href="index.html#lab"><span class="cta"><span class="star">✨</span>🎮</span><span class="lbl">命运实验室</span></a>
+    <a href="index.html#me"><span class="ic">🪪</span><span>我的</span></a>
+  </nav>
 </body>
 </html>

@@ -2,6 +2,8 @@
 let __sfxCtx = null;
 
 function playSfx(type) {
+  // 静音设置（"我的"页里可关）
+  try { if (localStorage.getItem('mute') === '1') return; } catch (e) {}
   try {
     const Ctx = window.AudioContext || window.webkitAudioContext;
     if (Ctx) {

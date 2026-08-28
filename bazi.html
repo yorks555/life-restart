@@ -73,6 +73,10 @@
     const p = detail.pillars;
     lastBazi = { y, m, d, hour, detail };
 
+    // 生肖图鉴：记录排盘的生肖（仅存本地）
+    const tz = Store.get('tujian_zodiac', []);
+    if (tz.indexOf(p.zodiac) < 0) { tz.push(p.zodiac); Store.set('tujian_zodiac', tz); }
+
     // 农历生日 + 星期
     const lun = window.lunar.lunarDate(y, m, d);
     const week = ['日', '一', '二', '三', '四', '五', '六'];
@@ -190,5 +194,12 @@
     var btn = document.querySelector('.form-row .btn'); if (btn) btn.addEventListener('click', function () { playSfx('good'); });
   });
   </script>
+  <!-- 底部 Tab -->
+  <nav class="tabbar">
+    <a href="index.html"><span class="ic">🏠</span><span>首页</span></a>
+    <a href="index.html#tujian"><span class="ic">📖</span><span>图鉴</span></a>
+    <a class="tab-center" href="index.html#lab"><span class="cta"><span class="star">✨</span>🎮</span><span class="lbl">命运实验室</span></a>
+    <a href="index.html#me"><span class="ic">🪪</span><span>我的</span></a>
+  </nav>
 </body>
 </html>

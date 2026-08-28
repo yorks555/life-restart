@@ -2,109 +2,266 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>人生重启研究所 · Life Restart</title>
-  <meta name="description" content="人生重启研究所：一个藏在互联网角落里的神秘人生模拟系统。人生重开、今日命运、命运排盘、命运抽签、人生统计、平行世界。仅供娱乐。">
+  <meta name="description" content="人生重启研究所：一个可爱又神秘的人生模拟 App。人生重开、今日命运、命运排盘、命运抽签、人生统计、平行世界。仅供娱乐。">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="container slim">
-    <header class="hero">
-      <p class="hero-emoji">🎐</p>
-      <p class="eyebrow">Life Restart</p>
-      <h1 class="title title-grad">人生重启研究所</h1>
-      <p class="subtitle">你的第二人生，从这里开始。</p>
-    </header>
+  <div class="app">
 
-    <!-- 我的档案（首页核心） -->
-    <div class="card" style="text-align:center">
-      <h2>🧧 我的档案</h2>
-      <div id="profileShow"></div>
-      <div class="form-row" style="margin-top:12px">
-        <input id="pBirth" type="date" aria-label="出生日期">
-        <button class="btn" onclick="saveProfile()">💾 保存档案</button>
+    <!-- 首页 -->
+    <section id="home">
+      <header class="greet">
+        <div class="avatar">Y</div>
+        <div class="txt">
+          <h1>👋 欢迎回来</h1>
+          <p id="greetSub">YORKS</p>
+        </div>
+      </header>
+
+      <!-- 我的人生 -->
+      <div class="card">
+        <h2>🪪 我的人生</h2>
+        <div id="profileBody"></div>
+        <div id="profileSetup" class="hidden">
+          <p class="muted" style="margin-bottom:12px">保存出生日期后，这里会显示你的生肖、年龄与人生进度。</p>
+          <div class="form-row">
+            <input id="pBirth" type="date" aria-label="出生日期">
+            <button class="btn" onclick="saveProfile()">保存档案</button>
+          </div>
+        </div>
       </div>
-      <p class="muted" style="margin-top:10px">填一次生日，这里常驻你的命运档案（数据仅存本地）</p>
-    </div>
 
-    <!-- 命运实验室 -->
-    <p class="section-title">命运实验室</p>
-    <div class="mod-grid">
-      <a class="mod-card" href="life.html">
-        <span class="emoji">🔄</span>
-        <h3>人生重开</h3>
-        <p>随机投胎，五段人生，开启第二人生</p>
-      </a>
-      <a class="mod-card" href="fortune.html">
-        <span class="emoji">🔮</span>
-        <h3>今日命运</h3>
-        <p>每日运势 · 农历 / 生肖 / 节气</p>
-      </a>
-      <a class="mod-card" href="bazi.html">
-        <span class="emoji">🧧</span>
-        <h3>命运排盘</h3>
-        <p>四柱八字 · 纳音 · 五行缺补</p>
-      </a>
-      <a class="mod-card" href="qian.html">
-        <span class="emoji">🎋</span>
-        <h3>命运抽签</h3>
-        <p>求一支签，看看命运怎么说</p>
-      </a>
-      <a class="mod-card" href="progress.html">
-        <span class="emoji">🪙</span>
-        <h3>人生统计</h3>
-        <p>看看你的人生已经走到哪</p>
-      </a>
-      <a class="mod-card" href="pixel-town.html">
-        <span class="emoji">🏘️</span>
-        <h3>平行世界</h3>
-        <p>生成一座独一无二的像素小镇</p>
-      </a>
-    </div>
+      <!-- 今日命运 -->
+      <div class="card">
+        <div class="luck-row">
+          <div class="pm"><div class="k">幸运指数</div><div class="v" id="luckIdx">--</div></div>
+          <div class="pm"><div class="k">幸运数字</div><div class="v" id="luckNum">--</div></div>
+        </div>
+        <p class="muted" style="margin-top:10px; text-align:center">今天也要好好活着，别活成 NPC。😄</p>
+        <a class="btn gold" style="width:100%; margin-top:12px" href="fortune.html">查看今日命运 →</a>
+      </div>
+    </section>
 
-    <footer>人生重启研究所 · 纯属娱乐 · <a href="privacy.html">隐私·免责</a></footer>
+    <!-- 图鉴 -->
+    <section id="tujian" class="hidden">
+      <p class="section-title">命运图鉴</p>
+      <div class="card"><div id="tujianBox"></div></div>
+    </section>
+
+    <!-- 我的 -->
+    <section id="me" class="hidden">
+      <div class="card" style="text-align:center">
+        <div class="avatar" style="margin:0 auto; width:64px; height:64px; font-size:2em">🧧</div>
+        <h2 style="margin-top:10px">YORKS</h2>
+        <p class="muted" id="meSub" style="margin-bottom:12px">尚未建档</p>
+        <div class="progress-track"><div class="progress-fill" id="meFill" style="width:0%"><span class="dot"></span></div></div>
+      </div>
+
+      <div class="card">
+        <h2>📊 我的数据</h2>
+        <div class="mystats" id="myStats"></div>
+      </div>
+
+      <div class="card">
+        <h2>⚙️ 设置</h2>
+        <div class="set-list">
+          <div class="set-row"><span class="l">🔊 音效</span><button class="switch" id="swSfx" onclick="toggleSfx()" aria-label="音效开关"></button></div>
+          <div class="set-row"><span class="l">🌙 深色模式</span><button class="switch" id="swTheme" onclick="toggleTheme()" aria-label="深色模式开关"></button></div>
+          <div class="set-row"><span class="l">ℹ️ 关于</span><a href="privacy.html" class="muted">隐私 · 免责 →</a></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>人生重启研究所 · 仅供娱乐 · <a href="privacy.html">隐私·免责</a></footer>
   </div>
+
+  <!-- 命运实验室弹层 -->
+  <div class="sheet-mask" id="sheetMask"></div>
+  <div class="sheet" id="sheet">
+    <p class="sheet-head">✨ 命运实验室</p>
+    <div class="mod-grid">
+      <a class="mod-card" href="life.html"><span class="emoji">🔄</span><h3>人生重开</h3></a>
+      <a class="mod-card" href="fortune.html"><span class="emoji">🔮</span><h3>今日命运</h3></a>
+      <a class="mod-card" href="bazi.html"><span class="emoji">🧧</span><h3>命运排盘</h3></a>
+      <a class="mod-card" href="qian.html"><span class="emoji">🎋</span><h3>命运抽签</h3></a>
+      <a class="mod-card" href="progress.html"><span class="emoji">🪙</span><h3>人生统计</h3></a>
+      <a class="mod-card" href="pixel-town.html"><span class="emoji">🏘️</span><h3>平行世界</h3></a>
+    </div>
+  </div>
+
+  <!-- 底部 Tab（中间为突出的命运实验室） -->
+  <nav class="tabbar">
+    <a href="#home" class="active" data-tab="home"><span class="ic">🏠</span><span>首页</span></a>
+    <a href="#tujian" data-tab="tujian"><span class="ic">📖</span><span>图鉴</span></a>
+    <button class="tab-center" id="labBtn" aria-label="命运实验室"><span class="cta"><span class="star">✨</span>🎮</span><span class="lbl">命运实验室</span></button>
+    <a href="#me" data-tab="me"><span class="ic">🪪</span><span>我的</span></a>
+  </nav>
 
   <script src="js/lunar.js"></script>
   <script src="js/store.js"></script>
   <script src="js/sfx.js"></script>
   <script src="js/ui.js"></script>
   <script>
-  function saveProfile() {
-    const dval = document.getElementById('pBirth').value;
-    if (!dval) { showToast('请先选择出生日期'); return; }
-    playSfx('good');
-    Store.set('profile', dval);
-    renderProfile();
-    showToast('档案已保存');
+  const PROFILE_KEY = 'profile';
+
+  function rng(seed) {
+    return function () {
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
   }
-  function statBox(emoji, name, val) {
-    return '<div class="attr"><span class="emoji">' + emoji + '</span><div class="name">' + name + '</div><div class="val">' + val + '</div></div>';
-  }
-  function renderProfile() {
-    const box = document.getElementById('profileShow');
-    const dval = Store.get('profile', null);
-    if (!dval) {
-      box.innerHTML = '<p class="muted">尚未建档 —— 保存出生日期后，这里会显示你的生肖、农历生日、运行天数与人生进度。</p>';
-      return;
-    }
-    const parts = dval.split('-'); const y = +parts[0], m = +parts[1], d = +parts[2];
+  function todayStr() { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  function hashStr(s) { let h = 1779033703; for (let i = 0; i < s.length; i++) { h = Math.imul(h ^ s.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); } return h >>> 0; }
+
+  // ---------- 图鉴数据 ----------
+  const QIAN_TITLES = ['春风得意马蹄疾','山重水复疑无路','会当凌绝顶','好雨知时节','随风潜入夜','海内存知己','欲穷千里目','采菊东篱下','不识庐山真面目','拔剑四顾心茫然','抽刀断水水更流','欲渡黄河冰塞川'];
+  const LIFE_ACH = ['📸 颜值担当','🧠 智慧担当','🏃 铁人三项','💰 财务自由','😅 月光族','📉 破产专家','😄 人生赢家','🫙 玻璃人','🙂 普通路人'];
+  const ZODIACS = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+  const ZODIAC_EMOJI = ['🐭','🐮','🐯','🐰','🐉','🐍','🐴','🐑','🐵','🐔','🐶','🐷'];
+  const TOTAL_TJ = QIAN_TITLES.length + LIFE_ACH.length + ZODIACS.length;
+
+  // ---------- 档案 ----------
+  function saveProfile() { const v = document.getElementById('pBirth').value; if (!v) { showToast('请选择出生日期'); return; } Store.set(PROFILE_KEY, v); playSfx('good'); renderAll(); showToast('档案已保存'); }
+  function profileData(v) {
+    const parts = v.split('-'); const y = +parts[0], m = +parts[1], d = +parts[2];
     const lun = window.lunar.lunarDate(y, m, d);
     const birth = new Date(y, m - 1, d), now = new Date();
     const ageDays = Math.floor((now - birth) / 86400000);
+    const age = Math.floor(ageDays / 365.25);
     const pct = Math.min(100, ageDays / (80 * 365.25) * 100);
-    box.innerHTML =
-      '<p class="muted">出生日期 ' + y + '年' + m + '月' + d + '日</p>' +
-      '<div class="attrs" style="margin-top:12px">' +
-        statBox('🐉', '生肖', lun.zodiac) +
-        statBox('🎂', '农历生日', lun.monthCn + lun.dayCn) +
-        statBox('📅', '运行天数', ageDays.toLocaleString() + ' 天') +
-        statBox('🪙', '人生进度', pct.toFixed(1) + '%') +
-      '</div>' +
-      '<div class="progress-track" style="margin-top:14px"><div class="progress-fill" style="width:' + pct.toFixed(1) + '%"><span class="dot"></span></div></div>';
+    return { y, m, d, lun, ageDays, age, pct };
   }
-  renderProfile();
+
+  // ---------- 渲染 ----------
+  function renderAll() {
+    const v = Store.get(PROFILE_KEY, null);
+    const q = Store.get('tujian_qian', []);
+    const lf = Store.get('tujian_life', []);
+    const zd = Store.get('tujian_zodiac', []);
+    const st = Store.get('life_stats', { count: 0, best: '' });
+
+    // 问候 + 我的人生
+    const body = document.getElementById('profileBody');
+    const setup = document.getElementById('profileSetup');
+    let greetSub = 'YORKS';
+    if (v) {
+      const p = profileData(v);
+      greetSub = 'YORKS · 今天是你人生的第 ' + p.ageDays.toLocaleString() + ' 天';
+      body.innerHTML =
+        '<div class="pmetrics">' +
+          '<div class="pm"><div class="k">🐉 生肖</div><div class="v">' + p.lun.zodiac + '</div></div>' +
+          '<div class="pm"><div class="k">🎂 年龄</div><div class="v">' + p.age + ' 岁</div></div>' +
+          '<div class="pm"><div class="k">🗓 天数</div><div class="v">' + p.ageDays.toLocaleString() + '</div></div>' +
+        '</div>' +
+        '<div class="progress-track"><div class="progress-fill" style="width:' + p.pct.toFixed(1) + '%"><span class="dot"></span></div></div>' +
+        '<div style="text-align:center; color:var(--muted); font-size:.92em; margin-top:6px">人生进度 <b style="color:var(--primary)">' + p.pct.toFixed(1) + '%</b></div>';
+      setup.classList.add('hidden');
+      // 我的页
+      document.getElementById('meSub').textContent = '人生运行 ' + p.ageDays.toLocaleString() + ' 天 · 进度 ' + p.pct.toFixed(1) + '%';
+      document.getElementById('meFill').style.width = p.pct.toFixed(1) + '%';
+    } else {
+      greetSub = 'YORKS';
+      body.innerHTML = '';
+      setup.classList.remove('hidden');
+      document.getElementById('meSub').textContent = '尚未建档';
+      document.getElementById('meFill').style.width = '0%';
+    }
+    document.getElementById('greetSub').textContent = greetSub;
+
+    // 今日命运
+    const seed = hashStr(todayStr() + '|' + (v || 'guest'));
+    const rand = rng(seed);
+    document.getElementById('luckIdx').textContent = Math.floor(rand() * 40) + 60;
+    document.getElementById('luckNum').textContent = Math.floor(rand() * 99) + 1;
+
+    // 我的数据
+    const got = q.length + lf.length + zd.length;
+    document.getElementById('myStats').innerHTML =
+      '<div class="pm"><div class="k">🏆 成就</div><div class="v">' + lf.length + '/' + LIFE_ACH.length + '</div></div>' +
+      '<div class="pm"><div class="k">📖 图鉴</div><div class="v">' + got + '/' + TOTAL_TJ + '</div></div>' +
+      '<div class="pm"><div class="k">🔄 重开次数</div><div class="v">' + (st.count || 0) + '</div></div>' +
+      '<div class="pm"><div class="k">⭐ 最高评级</div><div class="v">' + (st.best || '—') + '</div></div>';
+
+    renderTujian(q, lf, zd);
+  }
+
+  function renderTujian(q, lf, zd) {
+    let html = '<p class="muted" style="margin-bottom:14px">已收集 ' + (q.length + lf.length + zd.length) + ' / ' + TOTAL_TJ + '</p>';
+    html += '<div class="tujian-cat">🎋 签文图鉴 ' + q.length + '/' + QIAN_TITLES.length + '</div><div class="tujian-grid">';
+    QIAN_TITLES.forEach((t, i) => {
+      const own = q.indexOf(i) >= 0;
+      html += '<div class="tj-item' + (own ? '' : ' locked') + '"><span class="ic">' + (own ? '🎋' : '🔒') + '</span>' + (own ? '第' + (i + 1) + '签' : '???') + '</div>';
+    });
+    html += '</div>';
+    html += '<div class="tujian-cat">🏆 人生成就 ' + lf.length + '/' + LIFE_ACH.length + '</div><div class="tujian-grid">';
+    LIFE_ACH.forEach(a => {
+      const own = lf.indexOf(a) >= 0;
+      const parts = a.split(' ');
+      html += '<div class="tj-item' + (own ? '' : ' locked') + '"><span class="ic">' + (own ? parts[0] : '🔒') + '</span>' + (own ? parts[1] : '???') + '</div>';
+    });
+    html += '</div>';
+    html += '<div class="tujian-cat">🐉 生肖图鉴 ' + zd.length + '/' + ZODIACS.length + '</div><div class="tujian-grid">';
+    ZODIACS.forEach((z, i) => {
+      const own = zd.indexOf(z) >= 0;
+      html += '<div class="tj-item' + (own ? '' : ' locked') + '"><span class="ic">' + (own ? ZODIAC_EMOJI[i] : '🔒') + '</span>' + (own ? z : '???') + '</div>';
+    });
+    html += '</div>';
+    document.getElementById('tujianBox').innerHTML = html;
+  }
+
+  // ---------- Tab / 弹层 ----------
+  function setTab(name) {
+    document.getElementById('home').classList.toggle('hidden', name !== 'home');
+    document.getElementById('tujian').classList.toggle('hidden', name !== 'tujian');
+    document.getElementById('me').classList.toggle('hidden', name !== 'me');
+    document.querySelectorAll('.tabbar a[data-tab]').forEach(a => a.classList.toggle('active', a.dataset.tab === name));
+    const anchor = name === 'home' ? '#home' : (name === 'tujian' ? '#tujian' : '#me');
+    if (location.hash !== anchor) history.replaceState(null, '', anchor);
+  }
+  function openSheet() { document.getElementById('sheet').classList.add('show'); document.getElementById('sheetMask').classList.add('show'); }
+  function closeSheet() { document.getElementById('sheet').classList.remove('show'); document.getElementById('sheetMask').classList.remove('show'); }
+  document.getElementById('labBtn').addEventListener('click', openSheet);
+  document.getElementById('sheetMask').addEventListener('click', closeSheet);
+  document.querySelectorAll('.tabbar a[data-tab]').forEach(a => {
+    a.addEventListener('click', function (e) { e.preventDefault(); setTab(this.dataset.tab); });
+  });
+
+  // 外部链接带 hash 打开对应视图
+  function applyHash() {
+    const h = location.hash;
+    if (h === '#tujian') setTab('tujian');
+    else if (h === '#me' || h === '#me-section') setTab('me');
+    else if (h === '#lab') openSheet();
+    else setTab('home');
+  }
+
+  // ---------- 设置 ----------
+  function initSwitches() {
+    document.getElementById('swSfx').classList.toggle('on', localStorage.getItem('mute') !== '1');
+    document.getElementById('swTheme').classList.toggle('on', localStorage.getItem('theme') === 'dark');
+  }
+  function toggleSfx() {
+    const on = localStorage.getItem('mute') === '1';
+    localStorage.setItem('mute', on ? '' : '1');
+    document.getElementById('swSfx').classList.toggle('on', on);
+    if (!on) playSfx('good');
+  }
+  function toggleTheme() {
+    const dark = localStorage.getItem('theme') === 'dark';
+    localStorage.setItem('theme', dark ? 'light' : 'dark');
+    if (dark) document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', 'dark');
+    document.getElementById('swTheme').classList.toggle('on', !dark);
+  }
+
+  initSwitches();
+  applyHash();
+  renderAll();
   </script>
   <script src="js/pwa.js"></script>
 </body>

@@ -191,6 +191,11 @@
   // 第三部分：开始新的人生
   // ==========================================================
   function startLife() {
+    // 统计重开次数（仅存本地）
+    const st = Store.get('life_stats', { count: 0, best: '' });
+    st.count = (st.count || 0) + 1;
+    Store.set('life_stats', st);
+
     // 1. 随机出生：性别、五项属性、天赋
     me = {
       性别: Math.random() < 0.5 ? "男" : "女",
@@ -316,6 +321,15 @@
     me.成就 = ach;
     me.评级 = rank;
 
+    // 记录最高评级与成就图鉴（仅存本地）
+    const st2 = Store.get('life_stats', { count: 0, best: '' });
+    const ORDER = ['D', 'C', 'B', 'A', 'S'];
+    if (ORDER.indexOf(rank.grade) > ORDER.indexOf(st2.best || 'D')) st2.best = rank.grade;
+    Store.set('life_stats', st2);
+    const ta = Store.get('tujian_life', []);
+    ach.forEach(function (a) { if (ta.indexOf(a) < 0) ta.push(a); });
+    Store.set('tujian_life', ta);
+
     // 渲染结局文字
     document.getElementById("endText").innerHTML =
       '<p style="font-size:1.2em; margin:10px 0">☠️ 死亡原因：' + cause + "</p>" +
@@ -435,7 +449,15 @@
     location.reload();
   }
   </script>
+  <script src="js/store.js"></script>
   <script src="js/pwa.js"></script>
   <script src="js/ui.js"></script>
+  <!-- 底部 Tab -->
+  <nav class="tabbar">
+    <a href="index.html"><span class="ic">🏠</span><span>首页</span></a>
+    <a href="index.html#tujian"><span class="ic">📖</span><span>图鉴</span></a>
+    <a class="tab-center" href="index.html#lab"><span class="cta"><span class="star">✨</span>🎮</span><span class="lbl">命运实验室</span></a>
+    <a href="index.html#me"><span class="ic">🪪</span><span>我的</span></a>
+  </nav>
 </body>
 </html>
