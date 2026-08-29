@@ -306,21 +306,21 @@ h1.title { text-align: center; font-size: 1.6em; font-weight: 700; margin: 14px 
    4-Tab 底部栏：中间突出的"命运实验室"按钮 + 弹层
    ========================================================== */
 .tabbar .tab-center {
-  position: relative; margin-top: -28px;
+  position: relative; margin-top: -22px;
   display: flex; flex-direction: column; align-items: center; gap: 3px;
   text-decoration: none; color: var(--muted); font-size: .72em; min-width: 72px;
   background: none; border: none; cursor: pointer; font-family: inherit;
 }
 .tabbar .tab-center .cta {
-  width: 56px; height: 56px; border-radius: 50%;
+  width: 46px; height: 46px; border-radius: 50%;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  color: #fff; font-size: 1.25em; font-weight: 800; line-height: 1.1;
-  box-shadow: 0 8px 20px rgba(108,99,255,.35);
+  color: #fff; font-size: .98em; font-weight: 800; line-height: 1.1;
+  box-shadow: 0 6px 16px rgba(108,99,255,.32);
   border: 3px solid var(--bg);
   transition: transform .15s ease;
 }
-.tabbar .tab-center .cta .star { font-size: .6em; line-height: .9; }
+.tabbar .tab-center .cta .star { font-size: .55em; line-height: .9; }
 .tabbar .tab-center:active .cta { transform: scale(.94); }
 .tabbar .tab-center .lbl { color: var(--primary); font-weight: 700; }
 
