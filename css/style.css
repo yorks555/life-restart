@@ -155,6 +155,7 @@ body {
 }
 .mod-card:hover { transform: translateY(-3px); border-color: var(--primary); }
 .mod-card .emoji { font-size: 2em; }
+.mod-card svg { width: 34px; height: 34px; color: var(--primary); }
 .mod-card h3 { font-size: .98em; font-weight: 600; }
 .mod-card p { font-size: .78em; color: var(--muted); }
 
