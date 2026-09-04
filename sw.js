@@ -1,5 +1,5 @@
 // Service Worker：缓存核心资源，实现离线可用 + 可安装到桌面
-const CACHE = 'life-restart-v4';
+const CACHE = 'life-restart-v5';
 const ASSETS = [
   'index.html', 'life.html', 'fortune.html', 'bazi.html', 'qian.html',
   'progress.html', 'pixel-town.html', 'privacy.html',
@@ -15,6 +15,11 @@ self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(keys =>
     Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
   ).then(() => self.clients.claim()));
+});
+
+// 兜底：页面告知有新版等待接管时，立即激活
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 // 网络优先：在线时永远取最新；离线时回退到缓存（这样更新后手机能看到新版）
