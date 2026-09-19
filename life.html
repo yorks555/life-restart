@@ -276,6 +276,9 @@
       addLog("【" + stage.name + "】" + ev.t + diff, type);
     }
 
+    document.querySelectorAll('#attrsBox .val').forEach((element, i) => {
+      element.textContent = me[['颜值', '智力', '体质', '财富', '幸福'][i]];
+    });
     stageIdx++;
 
     // 体质被扣到 0 以下 → 提前去世
@@ -324,7 +327,7 @@
     // 记录最高评级与成就图鉴（仅存本地）
     const st2 = Store.get('life_stats', { count: 0, best: '' });
     const ORDER = ['D', 'C', 'B', 'A', 'S'];
-    if (ORDER.indexOf(rank.grade) > ORDER.indexOf(st2.best || 'D')) st2.best = rank.grade;
+    if (!st2.best || ORDER.indexOf(rank.grade) > ORDER.indexOf(st2.best)) st2.best = rank.grade;
     Store.set('life_stats', st2);
     const ta = Store.get('tujian_life', []);
     ach.forEach(function (a) { if (ta.indexOf(a) < 0) ta.push(a); });

@@ -63,7 +63,7 @@
   // 排八字
   function paiPan() {
     const dval = document.getElementById('birthDate').value;
-    if (!dval) { showToast('请先选择出生日期'); return; }
+    if (!Profile.validBirth(dval)) { showToast('请选择 1900 年 1 月 31 日至今天的出生日期'); return; }
     const parts = dval.split('-');
     const y = +parts[0], m = +parts[1], d = +parts[2];
     const tval = document.getElementById('birthTime').value;
@@ -180,6 +180,7 @@
   }
   </script>
   <script src="js/store.js"></script>
+  <script src="js/profile.js"></script>
   <script src="js/sfx.js"></script>
   <script src="js/pwa.js"></script>
   <script src="js/ui.js"></script>
@@ -189,6 +190,8 @@
     var d = document.getElementById('birthDate'), t = document.getElementById('birthTime');
     var v = Store.get('bazi_input', null);
     if (v && d) { if (v.date) d.value = v.date; if (t && v.time) t.value = v.time; }
+    Profile.bindBirthday(d);
+    d.setAttribute('aria-label', '出生日期');
     d.addEventListener('change', save); if (t) t.addEventListener('change', save);
     function save() { Store.set('bazi_input', { date: d.value, time: t.value }); }
     var btn = document.querySelector('.form-row .btn'); if (btn) btn.addEventListener('click', function () { playSfx('good'); });

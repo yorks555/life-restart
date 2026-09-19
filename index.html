@@ -14,21 +14,29 @@
     <!-- 首页 -->
     <section id="home">
       <header class="greet">
-        <div class="avatar">Y</div>
+        <div class="avatar" id="profileAvatar">✦</div>
         <div class="txt">
           <h1>👋 欢迎回来</h1>
-          <p id="greetSub">YORKS</p>
+          <p id="greetSub">欢迎来到人生重启研究所</p>
         </div>
       </header>
 
+      <div class="card hero-card">
+        <p class="eyebrow">LIFE RESTART · 人生重启研究所</p>
+        <h2>另一种人生，从这里开始。</h2>
+        <p>体验一段未知的旅程，收集属于你的故事。</p>
+        <a class="btn" href="life.html">✦ 开始一段新人生 →</a>
+        <div class="quick-links"><a href="qian.html">🎋 抽一支签</a><a href="pixel-town.html">🏘️ 探索平行世界</a><button onclick="openSheet()">全部玩法 →</button></div>
+      </div>
       <!-- 我的人生 -->
       <div class="card">
-        <h2>🪪 我的人生</h2>
+        <div class="card-heading"><h2>🪪 我的人生</h2><button class="text-button" onclick="editProfile()">编辑档案</button></div>
         <div id="profileBody"></div>
         <div id="profileSetup" class="hidden">
           <p class="muted" style="margin-bottom:12px">保存出生日期后，这里会显示你的生肖、年龄与人生进度。</p>
           <div class="form-row">
-            <input id="pBirth" type="date" aria-label="出生日期">
+            <label>昵称<input id="pName" type="text" maxlength="24" placeholder="怎么称呼你？"></label>
+            <label>出生日期<input id="pBirth" type="date" aria-label="出生日期"></label>
             <button class="btn" onclick="saveProfile()">保存档案</button>
           </div>
         </div>
@@ -55,7 +63,8 @@
     <section id="me" class="hidden">
       <div class="card" style="text-align:center">
         <div class="avatar" style="margin:0 auto; width:64px; height:64px; font-size:2em">🧧</div>
-        <h2 style="margin-top:10px">YORKS</h2>
+        <h2 id="meName" style="margin-top:10px">旅行者</h2>
+        <button class="text-button" onclick="editProfile()">编辑昵称与生日</button>
         <p class="muted" id="meSub" style="margin-bottom:12px">尚未建档</p>
         <div class="progress-track"><div class="progress-fill" id="meFill" style="width:0%"><span class="dot"></span></div></div>
       </div>
@@ -78,6 +87,11 @@
     <footer>人生重启研究所 · 仅供娱乐 · <a href="privacy.html">隐私·免责</a></footer>
   </div>
 
+  <dialog id="collectionDialog" class="collection-dialog" aria-labelledby="collectionTitle" aria-describedby="collectionText">
+    <h2 id="collectionTitle"></h2><p id="collectionText"></p>
+    <a class="btn" id="collectionLink">去探索</a>
+    <form method="dialog"><button class="btn ghost">关闭</button></form>
+  </dialog>
   <!-- 命运实验室弹层 -->
   <div class="sheet-mask" id="sheetMask"></div>
   <div class="sheet" id="sheet">
@@ -102,21 +116,13 @@
 
   <script src="js/lunar.js"></script>
   <script src="js/store.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/fortune.js"></script>
+  <script src="js/qian-data.js"></script>
   <script src="js/sfx.js"></script>
   <script src="js/ui.js"></script>
   <script>
   const PROFILE_KEY = 'profile';
-
-  function rng(seed) {
-    return function () {
-      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
-      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
-  function todayStr() { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
-  function hashStr(s) { let h = 1779033703; for (let i = 0; i < s.length; i++) { h = Math.imul(h ^ s.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); } return h >>> 0; }
 
   // ---------- 图鉴数据 ----------
   const QIAN_TITLES = ['春风得意马蹄疾','山重水复疑无路','会当凌绝顶','好雨知时节','随风潜入夜','海内存知己','欲穷千里目','采菊东篱下','不识庐山真面目','拔剑四顾心茫然','抽刀断水水更流','欲渡黄河冰塞川'];
@@ -126,20 +132,39 @@
   const TOTAL_TJ = QIAN_TITLES.length + LIFE_ACH.length + ZODIACS.length;
 
   // ---------- 档案 ----------
-  function saveProfile() { const v = document.getElementById('pBirth').value; if (!v) { showToast('请选择出生日期'); return; } Store.set(PROFILE_KEY, v); playSfx('good'); renderAll(); showToast('档案已保存'); }
+  function editProfile() {
+    setTab('home');
+    document.getElementById('profileSetup').classList.remove('hidden');
+    document.getElementById('pBirth').value = Profile.birth();
+    document.getElementById('pName').value = Profile.name();
+    document.getElementById('pName').focus();
+  }
+  function saveProfile() {
+    const v = document.getElementById('pBirth').value;
+    if (!Profile.validBirth(v)) { showToast('请选择 1900 年 1 月 31 日至今天的出生日期'); return; }
+    const name = document.getElementById('pName').value.trim().slice(0, 24);
+    Store.set(PROFILE_KEY, v);
+    Store.set('profile_name', name);
+    const fortune = Profile.fortuneInput();
+    Store.set('fortune_input', { name, zodiac: fortune.zodiac });
+    playSfx('good'); renderAll(); showToast('档案已保存');
+  }
   function profileData(v) {
     const parts = v.split('-'); const y = +parts[0], m = +parts[1], d = +parts[2];
     const lun = window.lunar.lunarDate(y, m, d);
     const birth = new Date(y, m - 1, d), now = new Date();
     const ageDays = Math.floor((now - birth) / 86400000);
-    const age = Math.floor(ageDays / 365.25);
+    const age = now.getFullYear() - y - ((now.getMonth() + 1 < m || (now.getMonth() + 1 === m && now.getDate() < d)) ? 1 : 0);
     const pct = Math.min(100, ageDays / (80 * 365.25) * 100);
     return { y, m, d, lun, ageDays, age, pct };
   }
 
   // ---------- 渲染 ----------
   function renderAll() {
-    const v = Store.get(PROFILE_KEY, null);
+    const v = Profile.birth();
+    const nickname = Profile.name() || '旅行者';
+    document.getElementById('meName').textContent = nickname;
+    document.getElementById('profileAvatar').textContent = Array.from(nickname)[0];
     const q = Store.get('tujian_qian', []);
     const lf = Store.get('tujian_life', []);
     const zd = Store.get('tujian_zodiac', []);
@@ -148,10 +173,10 @@
     // 问候 + 我的人生
     const body = document.getElementById('profileBody');
     const setup = document.getElementById('profileSetup');
-    let greetSub = 'YORKS';
+    let greetSub = nickname;
     if (v) {
       const p = profileData(v);
-      greetSub = 'YORKS · 今天是你人生的第 ' + p.ageDays.toLocaleString() + ' 天';
+      greetSub = nickname + ' · 今天是你人生的第 ' + p.ageDays.toLocaleString() + ' 天';
       body.innerHTML =
         '<div class="pmetrics">' +
           '<div class="pm"><div class="k">🐉 生肖</div><div class="v">' + p.lun.zodiac + '</div></div>' +
@@ -159,13 +184,13 @@
           '<div class="pm"><div class="k">🗓 天数</div><div class="v">' + p.ageDays.toLocaleString() + '</div></div>' +
         '</div>' +
         '<div class="progress-track"><div class="progress-fill" style="width:' + p.pct.toFixed(1) + '%"><span class="dot"></span></div></div>' +
-        '<div style="text-align:center; color:var(--muted); font-size:.92em; margin-top:6px">人生进度 <b style="color:var(--primary)">' + p.pct.toFixed(1) + '%</b></div>';
+        '<div style="text-align:center; color:var(--muted); font-size:.92em; margin-top:6px">人生进度（按 80 岁体验） <b style="color:var(--primary)">' + p.pct.toFixed(1) + '%</b></div>';
       setup.classList.add('hidden');
       // 我的页
       document.getElementById('meSub').textContent = '人生运行 ' + p.ageDays.toLocaleString() + ' 天 · 进度 ' + p.pct.toFixed(1) + '%';
       document.getElementById('meFill').style.width = p.pct.toFixed(1) + '%';
     } else {
-      greetSub = 'YORKS';
+      greetSub = '先探索玩法，也可以建立自己的档案';
       body.innerHTML = '';
       setup.classList.remove('hidden');
       document.getElementById('meSub').textContent = '尚未建档';
@@ -174,10 +199,10 @@
     document.getElementById('greetSub').textContent = greetSub;
 
     // 今日命运
-    const seed = hashStr(todayStr() + '|' + (v || 'guest'));
-    const rand = rng(seed);
-    document.getElementById('luckIdx').textContent = Math.floor(rand() * 40) + 60;
-    document.getElementById('luckNum').textContent = Math.floor(rand() * 99) + 1;
+    const input = Profile.fortuneInput();
+    const daily = DailyFortune.generate(input.name, input.zodiac);
+    document.getElementById('luckIdx').textContent = daily.total;
+    document.getElementById('luckNum').textContent = daily.num;
 
     // 我的数据
     const got = q.length + lf.length + zd.length;
@@ -195,24 +220,46 @@
     html += '<div class="tujian-cat">🎋 签文图鉴 ' + q.length + '/' + QIAN_TITLES.length + '</div><div class="tujian-grid">';
     QIAN_TITLES.forEach((t, i) => {
       const own = q.indexOf(i) >= 0;
-      html += '<div class="tj-item' + (own ? '' : ' locked') + '"><span class="ic">' + (own ? '🎋' : '🔒') + '</span>' + (own ? '第' + (i + 1) + '签' : '???') + '</div>';
+      html += '<button type="button" data-kind="qian" data-index="' + i + '" class="tj-item' + (own ? '' : ' locked') + '"><span class="ic">' + (own ? '🎋' : '🔒') + '</span>' + (own ? '第' + (i + 1) + '签' : '待发现') + '</button>';
     });
     html += '</div>';
     html += '<div class="tujian-cat">🏆 人生成就 ' + lf.length + '/' + LIFE_ACH.length + '</div><div class="tujian-grid">';
-    LIFE_ACH.forEach(a => {
+    LIFE_ACH.forEach((a, i) => {
       const own = lf.indexOf(a) >= 0;
       const parts = a.split(' ');
-      html += '<div class="tj-item' + (own ? '' : ' locked') + '"><span class="ic">' + (own ? parts[0] : '🔒') + '</span>' + (own ? parts[1] : '???') + '</div>';
+      html += '<button type="button" data-kind="life" data-index="' + i + '" class="tj-item' + (own ? '' : ' locked') + '"><span class="ic">' + (own ? parts[0] : '🔒') + '</span>' + (own ? parts[1] : '待发现') + '</button>';
     });
     html += '</div>';
     html += '<div class="tujian-cat">🐉 生肖图鉴 ' + zd.length + '/' + ZODIACS.length + '</div><div class="tujian-grid">';
     ZODIACS.forEach((z, i) => {
       const own = zd.indexOf(z) >= 0;
-      html += '<div class="tj-item' + (own ? '' : ' locked') + '"><span class="ic">' + (own ? ZODIAC_EMOJI[i] : '🔒') + '</span>' + (own ? z : '???') + '</div>';
+      html += '<button type="button" data-kind="zodiac" data-index="' + i + '" class="tj-item' + (own ? '' : ' locked') + '"><span class="ic">' + (own ? ZODIAC_EMOJI[i] : '🔒') + '</span>' + (own ? z : '待发现') + '</button>';
     });
     html += '</div>';
     document.getElementById('tujianBox').innerHTML = html;
   }
+
+  const ACH_HINTS = ['结局颜值达到 80', '结局智力达到 80', '结局体质达到 80', '结局财富达到 150', '结局财富不高于 20', '结局财富不高于 0', '结局幸福达到 100', '结局体质不高于 30', '完成一局且没有获得其他成就'];
+  document.getElementById('tujianBox').addEventListener('click', event => {
+    const item = event.target.closest('button[data-kind]');
+    if (!item) return;
+    const i = Number(item.dataset.index), kind = item.dataset.kind;
+    let title, text, link;
+    if (kind === 'qian') {
+      const own = Store.get('tujian_qian', []).includes(i);
+      title = own ? '第 ' + (i + 1) + ' 签 · ' + QIAN[i].level : '尚未发现的签文';
+      text = own ? QIAN[i].poem + '\n\n' + QIAN[i].note : '去命运抽签摇一支签，收集新的签文。';
+      link = 'qian.html';
+    } else if (kind === 'life') {
+      title = LIFE_ACH[i]; text = '解锁条件：' + ACH_HINTS[i] + '。'; link = 'life.html';
+    } else {
+      title = ZODIAC_EMOJI[i] + ' ' + ZODIACS[i]; text = '在命运排盘中体验这一生肖的生日，即可收集。'; link = 'bazi.html';
+    }
+    document.getElementById('collectionTitle').textContent = title;
+    document.getElementById('collectionText').textContent = text;
+    document.getElementById('collectionLink').href = link;
+    document.getElementById('collectionDialog').showModal();
+  });
 
   // ---------- Tab / 弹层 ----------
   function setTab(name) {
@@ -259,6 +306,11 @@
     document.getElementById('swTheme').classList.toggle('on', !dark);
   }
 
+  Profile.bindBirthday(document.getElementById('pBirth'));
+  document.getElementById('pName').value = Profile.name();
+  window.addEventListener('pageshow', renderAll);
+  window.addEventListener('hashchange', applyHash);
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') closeSheet(); });
   initSwitches();
   applyHash();
   renderAll();

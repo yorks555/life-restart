@@ -62,10 +62,12 @@
 
   function calProgress() {
     const dval = document.getElementById('birthDate').value;
-    if (!dval) { showToast('请先选择出生日期'); return; }
+    if (!Profile.validBirth(dval)) { showToast('请选择 1900 年 1 月 31 日至今天的出生日期'); return; }
     const parts = dval.split('-');
     const y = +parts[0], m = +parts[1], d = +parts[2];
-    const lifeYears = parseInt(document.getElementById('lifeSpan').value, 10) || 80;
+    const rawSpan = document.getElementById('lifeSpan').value;
+    const lifeYears = rawSpan === '' ? 80 : Number(rawSpan);
+    if (!Number.isInteger(lifeYears) || lifeYears < 1 || lifeYears > 120) { showToast('请输入 1 至 120 之间的整数年数'); return; }
 
     const birth = new Date(y, m - 1, d);
     const now = new Date();
@@ -205,6 +207,7 @@
   }
   </script>
   <script src="js/store.js"></script>
+  <script src="js/profile.js"></script>
   <script src="js/sfx.js"></script>
   <script src="js/pwa.js"></script>
   <script src="js/ui.js"></script>
@@ -214,6 +217,8 @@
     var d = document.getElementById('birthDate'), s = document.getElementById('lifeSpan');
     var v = Store.get('progress_input', null);
     if (v && d) { if (v.date) d.value = v.date; if (s && v.span) s.value = v.span; }
+    Profile.bindBirthday(d);
+    d.setAttribute('aria-label', '出生日期');
     d.addEventListener('change', save); if (s) s.addEventListener('input', save);
     function save() { Store.set('progress_input', { date: d.value, span: s.value }); }
     var btn = document.querySelector('.form-row .btn'); if (btn) btn.addEventListener('click', function () { playSfx('good'); });

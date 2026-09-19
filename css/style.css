@@ -162,6 +162,8 @@ body {
 /* ---------- 按钮 ---------- */
 .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
 .btn {
+  text-decoration: none;
+  text-align: center;
   display: inline-block; border: none; cursor: pointer;
   font-size: .95em; font-weight: 600; font-family: inherit;
   padding: 12px 22px; border-radius: 999px;
@@ -379,3 +381,36 @@ h1.title { text-align: center; font-size: 1.6em; font-weight: 700; margin: 14px 
 [data-theme="dark"] .switch::after { background: #e6edf5; }
 [data-theme="dark"] .tj-item.locked { color: #5f7089; }
 [data-theme="dark"] .sheet-mask { background: rgba(0,0,0,.55); }
+
+/* A clear first visit, editable profile and browsable collection. */
+.hero-card { background: linear-gradient(135deg, var(--accent-soft), var(--surface)); padding: 26px 22px; }
+.hero-card .eyebrow { color: var(--primary); font-size: .7em; letter-spacing: 1.2px; margin-bottom: 14px; }
+.hero-card h2 { font-size: 1.5em; line-height: 1.45; margin-bottom: 10px; }
+.hero-card > p:not(.eyebrow) { color: var(--muted); font-size: .9em; line-height: 1.8; }
+.hero-card > .btn { margin-top: 20px; display: block; }
+.quick-links { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+.quick-links a, .quick-links button, .text-button { color: var(--primary); font: inherit; font-size: .82em; text-decoration: none; border: 0; background: none; cursor: pointer; padding: 8px 0; }
+.card-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.pmetrics { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.pmetrics .pm { min-width: 0; padding: 14px 6px; }
+.pmetrics .v { font-size: 1.12em; overflow-wrap: anywhere; }
+.form-row label { display: flex; flex-direction: column; gap: 7px; color: var(--muted); font-size: .88em; flex: 1 1 160px; min-width: 0; }
+.form-row input, .form-row select { max-width: 100%; min-width: 0; }
+.form-row label input { width: 100%; }
+.tj-item { font-family: inherit; cursor: pointer; min-height: 84px; }
+.tj-item:hover { border-color: var(--primary); }
+.collection-dialog { margin: auto; width: min(420px, calc(100% - 32px)); padding: 26px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 22px; }
+.collection-dialog::backdrop { background: rgba(20,24,40,.55); }
+.collection-dialog h2 { font-size: 1.2em; }
+.collection-dialog p { white-space: pre-line; line-height: 1.9; margin: 18px 0 24px; }
+.collection-dialog form { display: inline-block; margin-left: 8px; }
+.frow { flex-wrap: wrap; }
+#fortuneMode { margin-top: 14px; }
+.sheet { max-height: 85dvh; overflow-y: auto; visibility: hidden; }
+.sheet.show { visibility: visible; }
+@media (min-width: 600px) { .sheet { max-width: 540px; margin: auto; } }
+@media (max-width: 360px) {
+  .tabbar a, .tabbar .tab-center { min-width: 0; flex: 1; }
+  .hero-card { padding: 22px 16px; }
+  .hero-card h2 { font-size: 1.3em; }
+}
