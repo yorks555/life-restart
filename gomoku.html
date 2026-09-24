@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>命运棋局 · 人生重启研究所</title>
+  <meta name="description" content="来下一局五子棋：休闲与挑战人机对弈、同屏双人、悔棋和本地战绩。">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/gomoku.css">
+  <script src="js/pwa.js" defer></script>
+</head>
+<body>
+  <main class="chess-app">
+    <header class="chess-header"><a href="index.html#lab" aria-label="返回命运实验室">← 实验室</a><span>一子落下，另一种可能</span></header>
+    <div class="chess-title"><div><p class="eyebrow">THE NEXT MOVE</p><h1>命运棋局<span>五子棋</span></h1></div><span class="chess-emblem" aria-hidden="true">●<i>○</i></span></div>
+    <section class="card chess-settings" aria-label="对局设置">
+      <div class="form-row">
+        <label>对弈模式<select id="mode"><option value="ai">人机对弈 · 你执黑</option><option value="local">同屏双人 · 轮流落子</option></select></label>
+        <label>人机难度<select id="difficulty"><option value="easy">休闲</option><option value="hard">挑战</option></select></label>
+      </div>
+      <p class="muted" id="modeHelp">休闲：观察棋形，练习攻防。</p>
+    </section>
+    <section class="chess-play" aria-label="五子棋对局">
+      <div class="turn-bar"><div><span id="turnDot" class="turn-dot"></span><strong id="status" role="status" aria-live="polite">黑棋先行</strong></div><span id="moveCount">第 1 手</span></div>
+      <div class="board-frame"><div id="board" class="chess-board" role="group" aria-label="15 行 15 列五子棋棋盘" aria-describedby="boardHelp"></div></div>
+      <div class="board-caption"><span id="selection" aria-live="polite">选择一个交叉点</span><span>15 × 15 · 无禁手</span></div>
+      <p id="boardHelp" class="muted">点选交叉点，再点“落子”，避免误触。键盘可用方向键选点、回车确认。</p>
+      <div class="chess-actions"><button id="place" class="btn" disabled>落子</button><button id="undo" class="btn ghost" disabled>悔棋</button><button id="restart" class="btn ghost">重新开始</button></div>
+      <p id="result" class="game-result" aria-live="polite"></p>
+    </section>
+    <section class="card chess-record">
+      <div class="card-heading"><h2>我的人机战绩</h2><span class="muted">仅保存在此浏览器</span></div>
+      <div id="chessStats" class="chess-stats"></div>
+      <div id="chessAchievements" class="chess-achievements"></div>
+    </section>
+    <details class="card chess-rules"><summary>玩法与记录规则</summary><p>黑棋先行，双方轮流落子。横、竖或斜向连成五颗及以上同色棋子即可获胜；无禁手，棋盘下满且无人获胜则为平局。</p><p>人机悔棋会退回到你上次落子前；双人悔棋撤回一手。已结束的对局不能悔棋。同屏双人不计入人机战绩。</p><p>未结束的棋局会自动保存。中途重开或切换设置不计胜负，但会中断人机连胜；刷新或离开后可继续。同一局只记录一次结果。</p></details>
+    <footer>人生重启研究所 · <a href="privacy.html">隐私与免责</a></footer>
+  </main>
+  <nav class="tabbar" aria-label="主导航">
+    <a href="index.html"><span class="ic">🏠</span><span>首页</span></a>
+    <a href="index.html#tujian"><span class="ic">📖</span><span>图鉴</span></a>
+    <a class="tab-center" href="index.html#lab"><span class="cta"><span class="star">✨</span>🎮</span><span class="lbl">命运实验室</span></a>
+    <a href="index.html#me"><span class="ic">🪪</span><span>我的</span></a>
+  </nav>
+  <dialog id="restartDialog" class="collection-dialog" aria-labelledby="restartTitle">
+    <h2 id="restartTitle">开始一局新棋？</h2><p>当前棋局将结束，人机连胜也会中断。已获得的成就和胜负记录会保留。</p>
+    <button id="confirmRestart" class="btn">开始新局</button><button id="cancelRestart" class="btn ghost">继续当前对局</button>
+  </dialog>
+  <script src="js/store.js"></script><script src="js/sfx.js"></script><script src="js/ui.js"></script>
+  <script src="js/gomoku-engine.js"></script><script src="js/gomoku.js"></script>
+</body>
+</html>

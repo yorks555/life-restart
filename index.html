@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>人生重启研究所 · Life Restart</title>
-  <meta name="description" content="人生重启研究所：一个可爱又神秘的人生模拟 App。人生重开、今日命运、命运排盘、命运抽签、人生统计、平行世界。仅供娱乐。">
+  <meta name="description" content="人生重启研究所：一个可爱又神秘的人生模拟 App。人生重开、今日命运、命运排盘、命运抽签、人生统计、平行世界、五子棋。仅供娱乐。">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -26,7 +26,7 @@
         <h2>另一种人生，从这里开始。</h2>
         <p>体验一段未知的旅程，收集属于你的故事。</p>
         <a class="btn" href="life.html">✦ 开始一段新人生 →</a>
-        <div class="quick-links"><a href="qian.html">🎋 抽一支签</a><a href="pixel-town.html">🏘️ 探索平行世界</a><button onclick="openSheet()">全部玩法 →</button></div>
+        <div class="quick-links"><a href="qian.html">🎋 抽一支签</a><a href="pixel-town.html">🏘️ 探索平行世界</a><a href="gomoku.html">⚫ 来下五子棋</a><button onclick="openSheet()">全部玩法 →</button></div>
       </div>
       <!-- 我的人生 -->
       <div class="card">
@@ -97,6 +97,7 @@
   <div class="sheet" id="sheet">
     <p class="sheet-head">✨ 命运实验室</p>
     <div class="mod-grid">
+      <a class="mod-card" href="gomoku.html"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 4h16v16H4zM4 12h16M12 4v16"/><circle cx="8" cy="8" r="2.4" fill="currentColor"/><circle cx="16" cy="16" r="2.4" fill="var(--surface)"/></svg><h3>命运棋局</h3><p>五子棋 · 人机 / 双人</p></a>
       <a class="mod-card" href="life.html"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary)"><path d="M21 12a9 9 0 11-3-6.7"/><polyline points="21 4 21 9 16 9"/></svg><h3>人生重开</h3></a>
       <a class="mod-card" href="fortune.html"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary)"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg><h3>今日命运</h3></a>
       <a class="mod-card" href="bazi.html"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary)"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21L8 9l4-6 4 6-4 12"/></svg><h3>命运排盘</h3></a>
@@ -119,6 +120,7 @@
   <script src="js/profile.js"></script>
   <script src="js/fortune.js"></script>
   <script src="js/qian-data.js"></script>
+  <script src="js/gomoku-engine.js"></script>
   <script src="js/sfx.js"></script>
   <script src="js/ui.js"></script>
   <script>
@@ -129,7 +131,8 @@
   const LIFE_ACH = ['📸 颜值担当','🧠 智慧担当','🏃 铁人三项','💰 财务自由','😅 月光族','📉 破产专家','😄 人生赢家','🫙 玻璃人','🙂 普通路人'];
   const ZODIACS = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
   const ZODIAC_EMOJI = ['🐭','🐮','🐯','🐰','🐉','🐍','🐴','🐑','🐵','🐔','🐶','🐷'];
-  const TOTAL_TJ = QIAN_TITLES.length + LIFE_ACH.length + ZODIACS.length;
+  const TOTAL_TJ = QIAN_TITLES.length + LIFE_ACH.length + ZODIACS.length + Gomoku.achievements.length;
+  function chessStats() { return Gomoku.stats((Store.get('gomoku_v1', {}) || {}).stats); }
 
   // ---------- 档案 ----------
   function editProfile() {
@@ -205,18 +208,23 @@
     document.getElementById('luckNum').textContent = daily.num;
 
     // 我的数据
-    const got = q.length + lf.length + zd.length;
+    const chess = chessStats();
+    const chessGot = Gomoku.unlocked(chess).length;
+    const got = q.length + lf.length + zd.length + chessGot;
     document.getElementById('myStats').innerHTML =
-      '<div class="pm"><div class="k">🏆 成就</div><div class="v">' + lf.length + '/' + LIFE_ACH.length + '</div></div>' +
+      '<div class="pm"><div class="k">🏆 成就</div><div class="v">' + (lf.length + chessGot) + '/' + (LIFE_ACH.length + Gomoku.achievements.length) + '</div></div>' +
       '<div class="pm"><div class="k">📖 图鉴</div><div class="v">' + got + '/' + TOTAL_TJ + '</div></div>' +
       '<div class="pm"><div class="k">🔄 重开次数</div><div class="v">' + (st.count || 0) + '</div></div>' +
-      '<div class="pm"><div class="k">⭐ 最高评级</div><div class="v">' + (st.best || '—') + '</div></div>';
+      '<div class="pm"><div class="k">⭐ 最高评级</div><div class="v">' + (st.best || '—') + '</div></div>' +
+      '<div class="pm"><div class="k">⚫ 棋局胜场</div><div class="v">' + chess.wins + '</div></div>' +
+      '<div class="pm"><div class="k">🔥 最佳连胜</div><div class="v">' + chess.bestStreak + '</div></div>';
 
     renderTujian(q, lf, zd);
   }
 
   function renderTujian(q, lf, zd) {
-    let html = '<p class="muted" style="margin-bottom:14px">已收集 ' + (q.length + lf.length + zd.length) + ' / ' + TOTAL_TJ + '</p>';
+    const chessOwned = Gomoku.unlocked(chessStats());
+    let html = '<p class="muted" style="margin-bottom:14px">已收集 ' + (q.length + lf.length + zd.length + chessOwned.length) + ' / ' + TOTAL_TJ + '</p>';
     html += '<div class="tujian-cat">🎋 签文图鉴 ' + q.length + '/' + QIAN_TITLES.length + '</div><div class="tujian-grid">';
     QIAN_TITLES.forEach((t, i) => {
       const own = q.indexOf(i) >= 0;
@@ -236,6 +244,12 @@
       html += '<button type="button" data-kind="zodiac" data-index="' + i + '" class="tj-item' + (own ? '' : ' locked') + '"><span class="ic">' + (own ? ZODIAC_EMOJI[i] : '🔒') + '</span>' + (own ? z : '待发现') + '</button>';
     });
     html += '</div>';
+    html += '<div class="tujian-cat">⚫ 棋局成就 ' + chessOwned.length + '/' + Gomoku.achievements.length + '</div><div class="tujian-grid">';
+    Gomoku.achievements.forEach((a, i) => {
+      const own = chessOwned.includes(a.id);
+      html += '<button type="button" data-kind="chess" data-index="' + i + '" class="tj-item' + (own ? '' : ' locked') + '"><span class="ic">' + (own ? a.icon : '🔒') + '</span>' + a.name + '</button>';
+    });
+    html += '</div>';
     document.getElementById('tujianBox').innerHTML = html;
   }
 
@@ -250,6 +264,9 @@
       title = own ? '第 ' + (i + 1) + ' 签 · ' + QIAN[i].level : '尚未发现的签文';
       text = own ? QIAN[i].poem + '\n\n' + QIAN[i].note : '去命运抽签摇一支签，收集新的签文。';
       link = 'qian.html';
+    } else if (kind === 'chess') {
+      const achievement = Gomoku.achievements[i];
+      title = achievement.icon + ' ' + achievement.name; text = achievement.hint; link = 'gomoku.html';
     } else if (kind === 'life') {
       title = LIFE_ACH[i]; text = '解锁条件：' + ACH_HINTS[i] + '。'; link = 'life.html';
     } else {

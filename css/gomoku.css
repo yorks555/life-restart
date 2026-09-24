@@ -1,0 +1,67 @@
+.chess-app { max-width: 600px; margin: auto; padding: 0 16px 22px; }
+.chess-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; gap: 12px; font-size: .8rem; color: var(--muted); }
+.chess-header a { color: var(--primary); text-decoration: none; padding: 8px 0; }
+.chess-title { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 16px; }
+.chess-title .eyebrow { font-size: .65rem; letter-spacing: 3px; color: var(--primary); margin-bottom: 8px; }
+.chess-title h1 { font-size: 1.8rem; letter-spacing: -.5px; }
+.chess-title h1 span { display: inline-block; margin-left: 12px; vertical-align: middle; font-size: .7rem; font-weight: 500; letter-spacing: 0; border: 1px solid var(--border); border-radius: 20px; padding: 5px 10px; color: var(--muted); }
+.chess-emblem { position: relative; color: #272c42; font-size: 3rem; line-height: 1; margin-right: 16px; }
+.chess-emblem i { position: absolute; left: 19px; top: 8px; color: var(--primary); font-style: normal; }
+.chess-settings { padding: 16px; }
+.chess-settings .form-row { align-items: start; }
+.chess-settings .form-row label { flex: 1 1 110px; }
+.chess-settings select { width: 100%; font-size: .85rem; padding: 10px 8px; }
+.chess-settings p { margin-top: 12px; }
+.chess-play { margin: 14px 0 22px; }
+.turn-bar, .board-caption { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.turn-bar { padding: 0 2px 14px; font-size: .88rem; }
+.turn-bar > div { display: flex; align-items: center; gap: 8px; }
+#moveCount { color: var(--muted); font-size: .8rem; white-space: nowrap; }
+.turn-dot { width: 13px; height: 13px; background: #252a3c; border: 1px solid #555b71; border-radius: 50%; flex-shrink: 0; }
+.turn-dot.white { background: #f8fafc; }
+.board-frame { padding: 9px; border-radius: 16px; background: #ece3d4; border: 1px solid #d7cdbd; box-shadow: 0 10px 30px #25203a0a; }
+.chess-board { display: grid; grid-template-columns: repeat(15, minmax(0, 1fr)); aspect-ratio: 1; width: 100%; }
+.intersection { position: relative; min-width: 0; min-height: 0; padding: 0; border: 0; border-radius: 0; background: transparent; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.intersection::before { content: ''; position: absolute; inset: 0; background: linear-gradient(#b7ab98,#b7ab98) center / 1px 100% no-repeat, linear-gradient(#b7ab98,#b7ab98) center / 100% 1px no-repeat; }
+.intersection.top::before { top: 50%; background-position: center, center top; }
+.intersection.bottom::before { bottom: 50%; background-position: center, center bottom; }
+.intersection.left::before { left: 50%; background-position: left center, center; }
+.intersection.right::before { right: 50%; background-position: right center, center; }
+.intersection.top.left::before, .intersection.top.right::before, .intersection.bottom.left::before, .intersection.bottom.right::before { background: none; border: 1px solid #b7ab98; }
+.intersection.top.left::before { border-right: 0; border-bottom: 0; }
+.intersection.top.right::before { border-left: 0; border-bottom: 0; }
+.intersection.bottom.left::before { border-right: 0; border-top: 0; }
+.intersection.bottom.right::before { border-left: 0; border-top: 0; }
+.intersection.star { background: radial-gradient(circle, #998c78 0 2px, transparent 2.5px); }
+.stone { position: absolute; inset: 8%; border-radius: 50%; z-index: 1; }
+.black .stone { background: radial-gradient(circle at 32% 28%, #535a70, #202432 68%); box-shadow: 1px 2px 2px #0004; }
+.white .stone { background: radial-gradient(circle at 32% 28%, #fff, #e5e7ec 72%); box-shadow: 1px 2px 2px #0004, inset 0 0 0 1px #c1c4cd; }
+.last .stone::after { content: ''; position: absolute; inset: 36%; border: 1.5px solid #c7b9ff; border-radius: 2px; }
+.white.last .stone::after { border-color: #6555ba; }
+.selected .stone { background: #8874e35e; border: 2px dashed #6c55b2; }
+.winning .stone { outline: 3px solid #8670db; outline-offset: 1px; }
+.intersection:focus-visible { z-index: 3; outline: 2px solid var(--primary); outline-offset: -2px; }
+.board-caption { margin-top: 12px; font-size: .75rem; color: var(--muted); }
+#selection { color: var(--primary); }
+#boardHelp { line-height: 1.7; margin-top: 10px; font-size: .75rem; }
+.chess-actions { display: flex; gap: 8px; margin-top: 12px; padding: 8px; border-radius: 24px; background: var(--surface); box-shadow: 0 4px 16px #2023330d; }
+.chess-actions .btn { padding: 12px 10px; flex: 1; font-size: .85rem; }
+.btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+.game-result { text-align: center; color: var(--primary); line-height: 1.8; margin-top: 14px; font-size: .9rem; }
+.chess-record { padding: 18px; }
+.chess-record .card-heading h2 { font-size: .95rem; }
+.chess-record .card-heading > span { font-size: .65rem; }
+.chess-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; text-align: center; }
+.chess-stats b { display: block; font-size: 1.3rem; color: var(--primary); margin: 4px 0; }
+.chess-stats span { font-size: .7rem; color: var(--muted); }
+.chess-achievements { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 18px; }
+.chess-achievements span { padding: 7px 9px; font-size: .7rem; border-radius: 8px; background: var(--accent-soft); color: var(--primary); }
+.chess-achievements .locked { color: var(--muted); background: var(--surface-2); }
+.chess-rules summary { cursor: pointer; font-size: .85rem; }
+.chess-rules p { font-size: .8rem; line-height: 1.9; color: var(--muted); margin-top: 12px; }
+#restartDialog .btn { margin: 4px 0; }
+[data-theme="dark"] .board-frame { background: #283345; border-color: #405069; }
+[data-theme="dark"] .intersection::before { filter: brightness(.7); }
+[data-theme="dark"] .black .stone { box-shadow: 1px 2px 3px #0008, inset 0 0 0 1px #8190a5; }
+[data-theme="dark"] .chess-emblem { color: #c6cce1; }
+@media(max-width:360px) { .chess-app { padding-inline: 10px; } .chess-title h1 { font-size: 1.55rem; } .chess-header { font-size: .7rem; } }
