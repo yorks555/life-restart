@@ -7,6 +7,8 @@
   <meta name="description" content="输入名字和星座，生成今日命运报告，带农历/生肖/节气。同一天同一人结果固定，也能换个签改命。玄学娱乐。">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tool-theme.css">
+<script src="js/tool-entry.js"></script>
 </head>
 <body>
   <nav class="nav">
@@ -116,7 +118,7 @@
 
     state = DailyFortune.generate(name, zodiac, changeFate);
 
-    document.getElementById('fortuneMode').textContent = changeFate ? '随机体验 · 不改变首页的今日结果' : '今日固定结果 · 与首页同步';
+    document.getElementById('fortuneMode').textContent = changeFate ? '随机体验 · 不改变今天的固定结果' : '今日固定结果 · 同一天同一人保持一致';
     // 标题 + 日期
     document.getElementById("fTitle").textContent = "🔮 " + state.name + " 的今日命运（" + zodiac + "）";
     document.getElementById("fDate").textContent =
@@ -181,46 +183,45 @@
 
     // 背景渐变
     const g = ctx.createLinearGradient(0, 0, W, H);
-    g.addColorStop(0, "#0f0c29");
-    g.addColorStop(0.5, "#302b63");
-    g.addColorStop(1, "#24243e");
+    g.addColorStop(0, "#f8f6eb");
+    g.addColorStop(0.5, "#f0efdf");
+    g.addColorStop(1, "#e8ecd9");
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
 
     ctx.textAlign = "left";
-    ctx.fillStyle = "#ffd200";
+    ctx.fillStyle = "#58774e";
     ctx.font = "bold 34px 'Microsoft YaHei'";
-    ctx.fillText("🔮 今日命运报告", 40, 70);
+    ctx.fillText("今日命运报告", 40, 70);
 
-    ctx.fillStyle = "#bbb";
+    ctx.fillStyle = "#818975";
     ctx.font = "18px 'Microsoft YaHei'";
     ctx.fillText(state.name + " · " + state.zodiac + " · " + state.date, 40, 110);
 
-    ctx.fillStyle = "#888";
+    ctx.fillStyle = "#818975";
     ctx.font = "16px 'Microsoft YaHei'";
     ctx.fillText("综合命势 " + state.total + " 分", 40, 140);
 
     // 四大项：文字 + 进度条 + 分数 + 点评
-    const EMOJI = { 财运: "💰", 事业: "💼", 爱情: "💘", 健康: "🏥" };
     let y = 190;
     for (const r of state.rows) {
-      ctx.fillStyle = "#eee";
+      ctx.fillStyle = "#34463c";
       ctx.font = "20px 'Microsoft YaHei'";
-      ctx.fillText(EMOJI[r.name] + " " + r.name, 40, y + 16);
+      ctx.fillText(r.name, 40, y + 16);
 
-      ctx.fillStyle = "rgba(255,255,255,.1)";
+      ctx.fillStyle = "#dfe5d1";
       ctx.fillRect(170, y, 380, 22);
       const grad = ctx.createLinearGradient(170, 0, 550, 0);
-      grad.addColorStop(0, "#00d2ff");
-      grad.addColorStop(1, "#3a7bd5");
+      grad.addColorStop(0, "#82966b");
+      grad.addColorStop(1, "#58774e");
       ctx.fillStyle = grad;
       ctx.fillRect(170, y, 380 * r.score / 100, 22);
 
-      ctx.fillStyle = "#ffd200";
+      ctx.fillStyle = "#58774e";
       ctx.font = "bold 18px 'Microsoft YaHei'";
       ctx.fillText(String(r.score), 565, y + 17);
 
-      ctx.fillStyle = "#ccc";
+      ctx.fillStyle = "#6e7c61";
       ctx.font = "16px 'Microsoft YaHei'";
       ctx.fillText(r.comment, 40, y + 48);
       y += 72;
@@ -228,24 +229,24 @@
 
     // 幸运信息 + 宜忌
     y += 10;
-    ctx.fillStyle = "#eee";
+    ctx.fillStyle = "#34463c";
     ctx.font = "18px 'Microsoft YaHei'";
-    ctx.fillText("🍀 幸运色：" + state.color, 40, y);
-    ctx.fillText("🔢 幸运数字：" + state.num + "　🧭 幸运方位：" + state.dir, 40, y + 34);
-    ctx.fillText("✅ 宜：" + state.yi, 40, y + 68);
-    ctx.fillText("❌ 忌：" + state.ji, 40, y + 102);
+    ctx.fillText("幸运色：" + state.color, 40, y);
+    ctx.fillText("幸运数字：" + state.num + "　幸运方位：" + state.dir, 40, y + 34);
+    ctx.fillText("宜：" + state.yi, 40, y + 68);
+    ctx.fillText("忌：" + state.ji, 40, y + 102);
 
     // 预言框
-    ctx.fillStyle = "rgba(255,210,160,.12)";
+    ctx.fillStyle = "#e5ebd9";
     ctx.fillRect(40, y + 130, 560, 70);
-    ctx.fillStyle = "#ffd2a0";
+    ctx.fillStyle = "#58774e";
     ctx.font = "18px 'Microsoft YaHei'";
-    ctx.fillText("🗣️ 今日预言：" + state.prophecy, 60, y + 172);
+    ctx.fillText("今日预言：" + state.prophecy, 60, y + 172);
 
     // 底部
-    ctx.fillStyle = "#888";
+    ctx.fillStyle = "#818975";
     ctx.font = "15px 'Microsoft YaHei'";
-    ctx.fillText("—— 玄学不可信，快乐是真的 😂", 40, 850);
+    ctx.fillText("—— 玄学不可信，快乐是真的", 40, 850);
 
     const a = document.createElement("a");
     a.href = cv.toDataURL("image/png");
@@ -256,6 +257,7 @@
   <script src="js/store.js"></script>
   <script src="js/profile.js"></script>
   <script src="js/sfx.js"></script>
+  <script src="js/legacy-nav.js"></script>
   <script src="js/pwa.js"></script>
   <script src="js/ui.js"></script>
   <script>

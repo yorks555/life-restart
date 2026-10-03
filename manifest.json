@@ -1,16 +1,36 @@
 {
-  "name": "人生重启研究所 · Life Restart",
-  "short_name": "人生重启研究所",
-  "description": "人生重启研究所：可爱又神秘的人生模拟 App。人生重开、今日命运、命运排盘、命运抽签、人生统计、平行世界。仅供娱乐。",
+  "name": "栖迟小镇 · 人生重启研究所",
+  "short_name": "栖迟小镇",
+  "description": "固定小镇里的生活肉鸽。选择出身与天赋，探索建筑，书写自己的人生。仅供娱乐。",
   "start_url": "index.html",
   "scope": ".",
   "display": "standalone",
-  "background_color": "#F5F7FB",
-  "theme_color": "#6C63FF",
+  "background_color": "#ecece3",
+  "theme_color": "#55785b",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
-    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
   ]
 }

@@ -7,6 +7,8 @@
   <meta name="description" content="输入生日，看看你已经度过人生的百分之多少，配一句调侃文案。人生进度条，走到哪算哪。">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tool-theme.css">
+<script src="js/tool-entry.js"></script>
 </head>
 <body>
   <nav class="nav">
@@ -143,12 +145,12 @@
   function copyProgress() {
     if (!lastData) return;
     const t = [
-      '🪙 人生进度条',
+      '人生刻度',
       lastData.y + '年' + lastData.m + '月' + lastData.d + '日出生 · 生肖 ' + lastData.zodiac + ' · 预期 ' + lastData.lifeYears + ' 岁',
       '已走过 ' + lastData.ageDays.toLocaleString() + ' 天，还剩 ' + lastData.remainDays.toLocaleString() + ' 天',
       '人生已度过 **' + lastData.percent.toFixed(1) + '%**',
       '『' + agePhrase(lastData.ageYears) + '』',
-      '—— 人生进度条，纯属娱乐 😄'
+      '—— 人生进度条，纯属娱乐'
     ].join('\n');
     navigator.clipboard.writeText(t)
       .then(() => showToast('✅ 进度文案已复制！'))
@@ -162,43 +164,43 @@
     cv.width = W; cv.height = H;
     const ctx = cv.getContext('2d');
     const g = ctx.createLinearGradient(0, 0, W, H);
-    g.addColorStop(0, '#0d1a2b'); g.addColorStop(1, '#152a3d');
+    g.addColorStop(0, '#f8f6eb'); g.addColorStop(1, '#e8ecd9');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#e6edf5';
+    ctx.fillStyle = '#34463c';
     ctx.font = 'bold 30px "Microsoft YaHei"';
-    ctx.fillText('🪙 人生进度条', W / 2, 70);
+    ctx.fillText('人生刻度', W / 2, 70);
 
-    ctx.fillStyle = '#8ca0ba';
+    ctx.fillStyle = '#818975';
     ctx.font = '18px "Microsoft YaHei"';
     ctx.fillText(lastData.y + '年' + lastData.m + '月' + lastData.d + '日出生 · 预期 ' + lastData.lifeYears + ' 岁', W / 2, 115);
 
-    ctx.fillStyle = '#5eead4';
+    ctx.fillStyle = '#82966b';
     ctx.font = 'bold 64px "Microsoft YaHei"';
     ctx.fillText(lastData.percent.toFixed(1) + '%', W / 2, 210);
 
     // 渐变进度条 + 末点
     const bx = 80, by = 240, bw = W - 160, bh = 22;
-    ctx.fillStyle = '#1d3350'; ctx.fillRect(bx, by, bw, bh);
+    ctx.fillStyle = '#dfe5d1'; ctx.fillRect(bx, by, bw, bh);
     const grad = ctx.createLinearGradient(bx, 0, bx + bw, 0);
-    grad.addColorStop(0, '#5eead4'); grad.addColorStop(1, '#a78bfa');
+    grad.addColorStop(0, '#82966b'); grad.addColorStop(1, '#58774e');
     ctx.fillStyle = grad; ctx.fillRect(bx, by, bw * lastData.percent / 100, bh);
     const dx = bx + bw * lastData.percent / 100;
     ctx.fillStyle = '#fff';
     ctx.beginPath(); ctx.arc(dx, by + bh / 2, 7, 0, Math.PI * 2); ctx.fill();
 
-    ctx.fillStyle = '#e6edf5';
+    ctx.fillStyle = '#34463c';
     ctx.font = '20px "Microsoft YaHei"';
     ctx.fillText('已过 ' + lastData.ageDays.toLocaleString() + ' 天 · 还剩 ' + lastData.remainDays.toLocaleString() + ' 天', W / 2, 310);
 
-    ctx.fillStyle = '#f5a623';
+    ctx.fillStyle = '#a39265';
     ctx.font = '20px "Microsoft YaHei"';
     ctx.fillText('『' + agePhrase(lastData.ageYears) + '』', W / 2, 380);
 
-    ctx.fillStyle = '#5f7089';
+    ctx.fillStyle = '#818975';
     ctx.font = '16px "Microsoft YaHei"';
-    ctx.fillText('—— 人生进度条，纯属娱乐 😄', W / 2, 470);
+    ctx.fillText('—— 人生进度条，纯属娱乐', W / 2, 470);
 
     const a = document.createElement('a');
     a.href = cv.toDataURL('image/png');
@@ -209,6 +211,7 @@
   <script src="js/store.js"></script>
   <script src="js/profile.js"></script>
   <script src="js/sfx.js"></script>
+  <script src="js/legacy-nav.js"></script>
   <script src="js/pwa.js"></script>
   <script src="js/ui.js"></script>
   <script>

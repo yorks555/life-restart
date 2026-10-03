@@ -1,7 +1,11 @@
 // Service Worker：缓存核心资源，实现离线可用 + 可安装到桌面
-const CACHE = 'life-restart-v7';
+const CACHE = 'life-restart-v13';
 const ASSETS = [
+  'css/game-loading.css', 'js/game-loading.js',
+  'js/game-art.js', 'js/game-navigation.js', 'js/game-panels.js', 'js/tool-entry.js', 'css/tool-theme.css',
+  'archive.html', 'css/game-desktop.css', 'js/game-shell.js', 'js/town-scene.js', 'js/legacy-nav.js', 'assets/town/character.svg',
   'gomoku.html', 'css/gomoku.css', 'js/gomoku-engine.js', 'js/gomoku.js',
+  'life-classic.html', 'css/life-rogue.css', 'js/life-rogue-data.js', 'js/life-rogue-engine.js', 'js/life-rogue.js', 'js/town-map.js',
   'index.html', 'life.html', 'fortune.html', 'bazi.html', 'qian.html',
   'progress.html', 'pixel-town.html', 'privacy.html',
   'css/style.css', 'js/lunar.js', 'js/store.js', 'js/sfx.js', 'js/pwa.js', 'js/ui.js', 'js/profile.js', 'js/fortune.js', 'js/qian-data.js',
@@ -26,12 +30,12 @@ self.addEventListener('message', e => {
 // 网络优先：在线时永远取最新；离线时回退到缓存（这样更新后手机能看到新版）
 self.addEventListener('fetch', e => {
   e.respondWith(
-    fetch(e.request)
+    fetch(e.request, { cache: 'no-cache' })
       .then(res => {
         const copy = res.clone();
         caches.open(CACHE).then(c => c.put(e.request, copy));
         return res;
       })
-      .catch(() => caches.match(e.request))
+      .catch(() => caches.match(e.request).then(hit => hit || caches.match(e.request, { ignoreSearch: true })))
   );
 });

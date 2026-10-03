@@ -414,3 +414,18 @@ h1.title { text-align: center; font-size: 1.6em; font-weight: 700; margin: 14px 
   .hero-card { padding: 22px 16px; }
   .hero-card h2 { font-size: 1.3em; }
 }
+
+.town-places { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-top: 18px; }
+.town-places a { color: var(--primary); background: var(--accent-soft); padding: 12px; border-radius: 12px; font-size: .8rem; line-height: 1.7; text-decoration: none; }
+@media(max-width:360px) { .town-places { grid-template-columns: 1fr; } }
+
+/* Preserved tools use a desktop workspace around the new game. */
+.legacy-desktop-nav { display: none; }
+@media (min-width: 1000px) {
+  :root { --app-w: 960px; }
+  body:has(.legacy-desktop-nav) { padding-bottom: 20px; }
+  .legacy-desktop-nav { display:flex; align-items:center; gap:28px; padding:20px 32px; border-bottom:1px solid var(--border); background:var(--surface); margin-bottom:24px; font-size:13px; }
+  .legacy-desktop-nav a:first-child { margin-right:auto; color:var(--primary); font-weight:600; }
+  body:has(.legacy-desktop-nav) .tabbar { display:none; }
+  .app.wide { max-width:960px; }
+}
