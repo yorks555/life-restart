@@ -10,7 +10,7 @@ test('each life route has one fixed, accessible building entrance',()=>{
 });
 test('walking stays inside the scene and does not enter the pond',()=>{
   assert.ok(Town.walkable(488,351));assert.ok(Town.walkable(400,350));
-  for(const [x,y] of [[0,0],[1001,350],[488,701],[900,620],[50,350]])assert.equal(Town.walkable(x,y),false);
+  for(const [x,y] of [[0,0],[Town.width+1,350],[488,Town.height+1],[900,620],[50,350]])assert.equal(Town.walkable(x,y),false);
 });
 test('click walking reaches every entrance from every other entrance without crossing obstacles',()=>{
  for(const from of Town.places)for(const to of Town.places){

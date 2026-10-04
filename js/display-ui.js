@@ -1,0 +1,14 @@
+(function(){
+  const $=id=>document.getElementById(id),panes=[$('characterPane'),$('journalPane')],homes=panes.map(p=>{const mark=document.createComment('panel dock');p.before(mark);return mark;});let mode=DisplayMode.current();
+  function dock(){panes.forEach((p,i)=>homes[i].after(p));}
+  function detail(index){dock();$('detailTitle').textContent=index===0?'我的角色':'人生手记';$('detailBody').append(panes[index]);GameUI.open('detailDialog');}
+  for(const [id,index] of [['desktopCharacterToggle',0],['desktopJournalToggle',1]])$(id).addEventListener('click',()=>{const collapsed=panes[index].classList.toggle('is-collapsed');$(id).setAttribute('aria-expanded',String(!collapsed));});
+  function sync(){const status=GameUI.status(),r=status.resources;for(const [id,key] of [['hudBody','body'],['hudMood','mood'],['hudMoney','money'],['hudKnowledge','knowledge']])$(id).textContent=r?r[key]:'—';document.querySelectorAll('input[name="displayMode"]').forEach(input=>input.checked=input.value===DisplayMode.selected());$('modeDescription').textContent='当前使用'+(DisplayMode.current()==='mobile'?'移动':'桌面')+'版'+(DisplayMode.selected()==='auto'?' · 根据窗口和触摸设备自动选择。':' · 已记住你的手动选择。');}
+  document.addEventListener('game:update',sync);document.addEventListener('display:change',()=>{const next=DisplayMode.current();if(next!==mode){if($('detailDialog').open)$('detailDialog').close();dock();mode=next;}sync();});document.addEventListener('display:save-error',()=>showToast('界面已切换，但当前浏览器无法记住偏好。'));
+  document.querySelectorAll('input[name="displayMode"]').forEach(input=>input.addEventListener('change',()=>{if(input.checked)DisplayMode.set(input.value);}));
+  for(const id of ['settingsBtn','mobileMenu','eventModeBtn'])$(id).addEventListener('click',()=>{sync();GameUI.open('settingsDialog');});
+  $('settingsDialog').addEventListener('close',()=>{if(!document.querySelector('dialog[open]')&&(GameUI.status().phase==='event'||GameUI.status().outcome))GameUI.start();});
+  for(const id of ['mobileHud','mobileCharacter'])$(id).addEventListener('click',()=>detail(0));$('mobileJournal').addEventListener('click',()=>detail(1));$('detailDialog').addEventListener('close',dock);$('mobileBag').addEventListener('click',()=>GameUI.open('bagDialog'));
+  function fullMap(){GameUI.open('mapDialog');$('overviewAreas').replaceChildren();const available=new Set([...document.querySelectorAll('.map-event-marker')].map(e=>e.dataset.placeId));for(const a of FixedTown.areas){const button=document.createElement('button');button.textContent=a.name+(available.has(a.place)?' · 有人生经历':'');button.addEventListener('click',()=>TownScene.visit(a.place));$('overviewAreas').append(button);}}
+  for(const id of ['minimapBtn','mobileMap'])$(id).addEventListener('click',fullMap);document.querySelectorAll('[data-open-modal]').forEach(button=>button.addEventListener('click',()=>GameUI.open(button.dataset.openModal)));sync();
+})();

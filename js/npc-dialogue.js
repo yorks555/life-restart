@@ -1,0 +1,6 @@
+(function(root){
+  const node=typeof module!=='undefined'&&module.exports,E=node?require('./npc-events.js'):root.NPCEvents;
+  const first={lin:'新来的？我是老林，工坊那边的。',xia:'我叫夏禾。书屋里的书，你也喜欢吗？',chen:'坐不住就出来转转。我姓陈，这树下总有鸟。',yu:'我是余青。小店开着，有空来坐。',zhou:'周岚，管这座车站的。路远，别急。',he:'何溪。你也下棋？先坐着看一盘。',qiao:'我是乔安，住你隔壁。以后抬头就能碰见。',wu:'名字不必记，记住相遇就好。'};
+  function line(id,s,time,behavior){const m=E.memory(s,id);if(!m.metPlayer)return first[id];if(s?.resources.body<25)return '脸色不太好。先歇歇，路还有很长。';if(id==='xia'&&s?.stage>=3)return m.playerHelpedMe?'当年那张书单，我到现在还留着。现在换我教孩子们读书了。':'我回来了。外面的路很长，这里的书屋还是熟悉的。';if(s?.stage>=4)return m.playerHelpedMe?'一晃这么多年。上回多亏你了，坐会儿？':'好多年了，见到熟面孔总觉得安心。';if(m.playerHelpedMe)return '上回那件事，还没好好谢你。来都来了，坐会儿？';if(m.lostChessToPlayer)return '上回那盘你赢了。我还记着那最后一手呢。';if(s?.visited.includes('road_rain'))return '路上那场雨，没淋着你吧？';if(time.slot>=4)return '快收工了。今天也慢慢过去了。';if(behavior==='playing')return '棋盘两边都有人，日子才有意思。坐着看会儿？';if(behavior==='studying')return '刚翻到有趣的一页。让我记下这句话，再聊。';if(behavior==='working'&&id==='lin')return '手上还有一点活，做完就能歇了。你今天怎么样？';return {lin:'今天又出来转悠？旧东西修修，还能用。',xia:'今天读到个有意思的故事，想不想听？',chen:'鸟儿照样来，人也该常走走。',yu:'又见面了。今天想买点什么，还是只聊聊？',zhou:'今天没有太多班车，等车的人却各有各的心事。',he:'棋盘摆好了。没事也可以看一会儿。',qiao:'隔壁的灯亮着，就知道有人回家了。',wu:'有些地方，第二次来才真正认识。'}[id];}
+  const api={line};if(node)module.exports=api;else root.NPCDialogue=api;
+})(globalThis);

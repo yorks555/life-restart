@@ -1,6 +1,9 @@
 // Service Worker：缓存核心资源，实现离线可用 + 可安装到桌面
-const CACHE = 'life-restart-v13';
+const CACHE = 'life-restart-v17';
 const ASSETS = [
+  'js/game-time.js', 'js/npc-data.js', 'js/npc-system.js', 'js/npc-events.js', 'js/npc-dialogue.js', 'js/npc-ui.js', 'css/residents.css',
+  'css/game-storybook.css', 'js/town-renderer.js',
+  'css/game-modes.css', 'js/display-mode.js', 'js/display-ui.js', 'js/town-camera.js', 'js/game-save.js', 'js/town-events.js',
   'css/game-loading.css', 'js/game-loading.js',
   'js/game-art.js', 'js/game-navigation.js', 'js/game-panels.js', 'js/tool-entry.js', 'css/tool-theme.css',
   'archive.html', 'css/game-desktop.css', 'js/game-shell.js', 'js/town-scene.js', 'js/legacy-nav.js', 'assets/town/character.svg',

@@ -1,20 +1,20 @@
-// A single pixel icon vocabulary for town, menus, events and collections.
+// A single soft illustrated icon vocabulary for town, menus, events and collections.
 (function(root){
   const art={
-    leaf:'<path fill="#7b9866" d="M3 10V6h2V4h8v6h-2v2H5v-2z"/><path fill="#496a46" d="M3 13h2v-2h2V9h2V7h2V5h2V3h1v3h-2v2h-2v2H8v2H6v2H3z"/>',
-    coin:'<path fill="#ac8950" d="M4 2h8v2h2v8h-2v2H4v-2H2V4h2z"/><path fill="#d9bd7c" d="M5 3h6v2h2v6h-2v2H5v-2H3V5h2z"/><path fill="#94774c" d="M7 5h3v2H8v2h3v2H6V9h1z"/>',
-    book:'<path fill="#6e8d88" d="M2 3h5l1 1 1-1h5v10H9l-1 1-1-1H2z"/><path fill="#e7d9b3" d="M3 4h4v8H3zm6 0h4v8H9z"/><path fill="#b8ab85" d="M4 6h2v1H4zm0 3h2v1H4zm6-3h2v1h-2zm0 3h2v1h-2z"/>',
-    chat:'<path fill="#81936c" d="M2 3h12v8H8v2H6v1H4v-3H2z"/><path fill="#e5e3be" d="M4 5h8v1H4zm0 3h5v1H4z"/>',
-    star:'<path fill="#c5a66c" d="M7 1h2v4h2v1h4v2h-4v2H9v5H7v-5H5V8H1V6h4V5h2z"/><path fill="#ebd6a0" d="M7 5h2v4H7z"/>',
-    bag:'<path fill="#ad9270" d="M5 1h6v2h2v2h1v9H2V5h1V3h2z"/><path fill="#ddc59c" d="M4 5h8v7H4z"/><path fill="#827759" d="M6 7h4v1H6zm-1 3h6v1H5z"/>',
-    heart:'<path fill="#b57e65" d="M2 3h4v2h4V3h4v6h-2v2h-2v2H6v-2H4V9H2z"/><path fill="#dba389" d="M3 4h2v3H3zm2 4h2v2H5z"/>',
-    home:'<path fill="#947b58" d="M2 7h12v7H2z"/><path fill="#b8785b" d="M1 6h2V4h2V2h6v2h2v2h2v2H1z"/><path fill="#decfa6" d="M3 8h10v5H3z"/><path fill="#7e765c" d="M7 9h3v5H7z"/>',
-    compass:'<path fill="#7f998b" d="M4 2h8v2h2v8h-2v2H4v-2H2V4h2z"/><path fill="#ddd4ad" d="M5 4h6v1h1v6h-1v1H5v-1H4V5h1z"/><path fill="#ac765c" d="M8 5h3v2H9v2H7v2H5V8h2V6h1z"/>',
-    lock:'<path fill="#9ca88a" d="M5 2h6v2h2v4h1v6H2V8h1V4h2z"/><path fill="#efedda" d="M6 4h4v4H6z"/><path fill="#718060" d="M7 10h2v2H7z"/>',
-    moon:'<path fill="#91a19b" d="M5 2h6v2H9v2H7v4h2v2h4v2H5v-2H3V4h2z"/>',
-    scroll:'<path fill="#a99169" d="M3 2h11v12H3V4H1V2z"/><path fill="#e4d3aa" d="M4 3h8v10H4z"/><path fill="#a9956d" d="M5 5h5v1H5zm0 3h5v1H5zm0 3h3v1H5z"/>'
+    leaf:'<path fill="#a9bd8b" d="M3 12C2 4 7 2 14 2c0 7-3 11-9 11"/><path d="M2 14 11 5m-5 6V7m2 2h3"/>',
+    coin:'<circle cx="8" cy="8" r="6" fill="#dec394"/><path d="M9.5 5.2H7a1.4 1.4 0 0 0 0 2.8h2a1.4 1.4 0 0 1 0 2.8H6.5M8 4v8"/>',
+    book:'<path fill="#eee3ca" d="M2 3.5c2-1 4-1 6 .5 2-1.5 4-1.5 6-.5v9c-2-1-4-1-6 .5-2-1.5-4-1.5-6-.5Z"/><path d="M8 4v9m-4-7h2m4 0h2M4 8h2m4 0h2"/>',
+    chat:'<path fill="#becbab" d="M5 2.5h6a3 3 0 0 1 3 3v4a3 3 0 0 1-3 3H7l-3 2v-2a3 3 0 0 1-2-3v-4a3 3 0 0 1 3-3Z"/><path d="M5 6h6M5 9h4"/>',
+    star:'<path fill="#e2c88f" d="m8 1.5 2 4.3 4.5.6-3.3 3.2.8 4.5-4-2.2-4 2.2.8-4.5L1.5 6.4l4.5-.6Z"/>',
+    bag:'<rect x="3" y="4" width="10" height="10" rx="2" fill="#d3b692"/><path d="M5.5 4V3a2.5 2.5 0 0 1 5 0v1M3 7h10M6 10h4"/>',
+    heart:'<path fill="#d5a38c" d="M8 13.5C-3 7.5 3-.7 8 4c5-4.7 11 3.5 0 9.5Z"/>',
+    home:'<path fill="#e7d7b7" d="M3 7h10v7H3Z"/><path fill="#bb947b" d="m1.5 7 4-5h5l4 5Z"/><path d="M6.5 14v-4h3v4M4.5 8.5h1"/>',
+    compass:'<circle cx="8" cy="8" r="6" fill="#cad8c9"/><path fill="#c09a7c" d="m10.5 5.5-1 4-4 1 1-4Z"/>',
+    lock:'<rect x="3" y="7" width="10" height="7" rx="2" fill="#c7cbb8"/><path d="M5 7V5a3 3 0 0 1 6 0v2M8 10v2"/>',
+    moon:'<path fill="#adbdc4" d="M11.5 2.5C3-.2-.8 10.4 7 13.5a6 6 0 0 0 7-3C8.5 12 5.5 5 11.5 2.5Z"/>',
+    scroll:'<path fill="#e5d4b0" d="M3 2h9v12H4V4H2V2Z"/><path d="M6 5h4M6 8h4M6 11h2"/>'
   };
   const map={ordinary:'home',market:'coin',memory:'book',night:'moon',social:'chat',thick:'leaf',save:'coin',optimist:'heart',scavenge:'compass',luck:'star',body:'leaf',money:'coin',mood:'heart',knowledge:'book',study:'book',work:'coin',rest:'home',adventure:'compass',odd:'star',shareholder:'scroll',scholar:'book',wealth:'coin',dance:'star',debt:'leaf',treasure:'bag',calm:'leaf'};
-  function icon(name){const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 16 16');svg.setAttribute('aria-hidden','true');svg.setAttribute('class','pixel-icon');svg.setAttribute('shape-rendering','crispEdges');svg.innerHTML=art[map[name]||name]||art.leaf;return svg;}
+  function icon(name){const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 16 16');svg.setAttribute('aria-hidden','true');svg.setAttribute('class','pixel-icon');svg.setAttribute('fill','none');svg.setAttribute('stroke','#7c8066');svg.setAttribute('stroke-width','1');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');svg.innerHTML=art[map[name]||name]||art.leaf;return svg;}
   root.GameArt={icon};
 })(globalThis);

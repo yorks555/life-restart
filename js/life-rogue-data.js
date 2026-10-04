@@ -158,7 +158,20 @@
     { id:'calm', name:'人间松弛感样本', icon:'🍵', text:'你的人生没有总冠军，但有很多很舒服的下午。', hint:'结局体力达到 65、心情达到 65。' },
     { id:'ordinary', name:'普通，但我来过', icon:'🌅', text:'没写进热搜，也没有白活。你的故事由你记得。', hint:'完成一段人生；体力或心情耗尽也会以这一结局收束。' }
   ];
-  const data = { stages, origins, talents, routes, events, endings };
+
+  const eventAreas={homework:'school',classboss:'school',lemonade:'commercial',nap:'residential',oldradio:'outskirts',pigeon:'plaza',exam:'school',club:'school',delivery:'commercial',holiday:'residential',signal:'outskirts',dreammajor:'school',ai:'school',boss:'workplace',startup:'commercial',leave:'park',treasure:'outskirts',catmanager:'workplace',nightclass:'school',boardmeeting:'workplace',promotion:'workplace',checkup:'park',radioreturn:'commercial',dance:'plaza',memoir:'school',reunion:'plaza',retirework:'commercial',sunset:'park',timeparcel:'residential',dancefinal:'plaza'};
+  events.forEach(e=>{e.area=eventAreas[e.id];e.type='normal';e.rarity=e.requires?'rare':'normal';e.weight=e.requires?1.5:1;});
+  const roadEvents=[
+    {id:'road_coin',title:'石缝里的零钱',text:'一枚硬币在旧石板间闪了一下。',choices:[choice('捡起来',{money:3},'零钱装进了口袋。'),choice('留给下一位旅人',{mood:2},'你向下一段旅程挥了挥手。')]},
+    {id:'road_rain',title:'一阵小雨',text:'雨点来得突然，路边的屋檐还空着。',choices:[choice('在屋檐下等一会儿',{body:2},'雨停了，路面有了新的颜色。'),choice('继续赶路',{body:-2,mood:2},'今天的风有一点凉。')]},
+    {id:'road_friend',title:'路上碰见熟人',text:'有人朝你挥手，问你最近过得怎么样。',choices:[choice('聊两句',{mood:4},'几句闲话，照亮了这条路。'),choice('打个招呼就走',{knowledge:1},'你记下了一个小镇的新消息。')]},
+    {id:'road_leaflet',title:'奇怪的传单',text:'纸上画着一条不在导览图里的小路。',choices:[choice('收好传单',{knowledge:2},'传单成为随身的一条线索。',{flag:'leaflet'}),choice('看看就放回去',{mood:1},'未知的故事留在了路边。')]},
+    {id:'road_help',title:'散落一地的苹果',text:'推车的轮子卡住了，有人正一颗颗拾起苹果。',choices:[choice('帮忙收拾',{body:-2,mood:5},'对方把谢意装进了笑容里。'),choice('指一下附近的修车铺',{knowledge:2},'你给出了一条有用的路。')]},
+    {id:'road_sales',title:'热情的推销员',text:'他说，这是今天最后一枚幸运纽扣。',choices:[choice('花三块钱买一枚',{money:-3,mood:2},'纽扣没有魔法，但可以当作纪念。',{flag:'button'}),choice('笑着说下次吧',{mood:1},'你保住了钱包，也没有伤和气。')]},
+    {id:'road_path',title:'藏在花丛里的小路',text:'花丛后露出几块旧石板，像是小时候走过的路。',choices:[choice('看看路边的旧路牌',{knowledge:3},'原来这里曾经是集市的入口。'),choice('在这里深呼吸',{body:2,mood:2},'旅途不总需要一个答案。')]},
+    {id:'road_charm',title:'长椅上的小挂件',text:'一个木制挂件被留在了长椅边。',choices:[choice('交到失物招领处',{mood:3},'也许有人正在寻找它。'),choice('收好，遇见失主再归还',{mood:1},'小挂件暂时陪你继续走。',{flag:'charm'})]}
+  ].map(e=>({...e,type:'road',tag:'adventure',rarity:'normal'}));
+  const data = { stages, origins, talents, routes, events, endings, roadEvents };
   if (typeof module !== 'undefined' && module.exports) module.exports = data;
   else root.LifeRogueData = data;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

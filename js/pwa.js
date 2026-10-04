@@ -10,7 +10,9 @@
     l.rel = 'manifest'; l.href = 'manifest.json';
     document.head.appendChild(l);
   }
-  if (!('serviceWorker' in navigator)) return;
+  const status=document.getElementById('pwaStatus');
+  if (!('serviceWorker' in navigator)) {if(status)status.textContent='此浏览器不支持离线安装，仍可在线游玩。';return;}
+  navigator.serviceWorker.ready.then(()=>{if(status)status.textContent='离线资源已准备好 · 可通过浏览器安装小镇。';});
 
   // 本页在脚本运行时是否已被旧版 Service Worker 控制。
   // 首次访问（无旧控制器）时不刷新；只有"旧版 → 新版"接管时才刷新一次。

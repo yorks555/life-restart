@@ -1,0 +1,17 @@
+(function(root){
+  const residents=[{id:'lin',name:'林叔',role:'工坊老板',personality:['沉稳','嘴硬心软'],home:'home',workplace:'workshop',coat:'#8c9278',ages:[2,3,3,4,4],relationships:{chen:'棋友',yu:'老朋友'},schedule:[['home','resting'],['workshop','working'],['market','eating'],['workshop','working'],['chess','playing'],['home','resting']]}];
+  residents[0].evening=[['home','resting',.6],['chess','playing',.35],['park','waiting',.05]];
+  residents[0].laterRole='退休的手艺人';residents[0].laterSchedule=[['park','resting'],['workshop','waiting'],['market','eating'],['chess','playing'],['chess','playing'],['home','resting']];
+  residents.push(
+    {id:'xia',name:'夏禾',role:'书屋里的学生',personality:['好奇','认真'],home:'home',workplace:'library',coat:'#849cac',ages:[0,1,2,3,4],awayStages:[2],laterRole:'返乡的书屋老师',laterHome:'archive',relationships:{yu:'常买糖的熟客',qiao:'一起长大的邻居'},schedule:[['home','resting'],['library','studying'],['market','shopping'],['library','studying'],['park','resting'],['home','resting']],laterSchedule:[['archive','resting'],['library','working'],['cafe','eating'],['library','studying'],['park','resting'],['archive','resting']]},
+    {id:'chen',name:'陈伯',role:'爱喂鸟的老人',personality:['爽朗','念旧'],home:'home',workplace:'park',coat:'#ad9678',ages:[3,4,4,4,4],relationships:{lin:'棋友',he:'老对手'},schedule:[['park','waiting'],['park','resting'],['cafe','eating'],['chess','playing'],['chess','playing'],['home','resting']]},
+    {id:'yu',name:'余青',role:'杂货铺店主',personality:['热心','记性好'],home:'home',workplace:'market',coat:'#bd927b',ages:[1,2,3,3,4],relationships:{lin:'老朋友',xia:'常来买糖的孩子',qiao:'邻居'},schedule:[['home','resting'],['market','working'],['market','eating'],['market','working'],['cafe','resting'],['home','resting']],evening:[['home','resting',.6],['cafe','resting',.3],['park','waiting',.1]]},
+    {id:'zhou',name:'周岚',role:'车站管理员',personality:['寡言','可靠'],home:'archive',workplace:'station',coat:'#7a9291',ages:[2,3,3,4,4],laterRole:'车站的老管理员',relationships:{wu:'认识的旅人',qiao:'常收到他的信'},schedule:[['archive','resting'],['station','working'],['station','eating'],['station','working'],['station','waiting'],['archive','resting']]},
+    {id:'he',name:'何溪',role:'棋摊常客',personality:['随和','胜负心'],home:'archive',workplace:'chess',coat:'#9c897d',ages:[2,3,3,4,4],relationships:{chen:'老对手',lin:'棋友'},schedule:[['archive','resting'],['cafe','resting'],['market','shopping'],['chess','playing'],['chess','playing'],['archive','resting']]},
+    {id:'qiao',name:'乔安',role:'隔壁的邻居',personality:['慢热','细心'],home:'home',workplace:'cafe',coat:'#a3a578',ages:[0,1,2,3,4],laterRole:'茶馆的经营者',relationships:{xia:'一起长大的朋友',yu:'邻居',zhou:'替自己寄信的人'},schedule:[['home','resting'],['cafe','working'],['cafe','eating'],['park','waiting'],['library','studying'],['home','resting']]},
+    {id:'wu',name:'无名旅人',role:'路过小镇的人',personality:['温和','神秘'],home:'station',workplace:'observatory',coat:'#849583',ages:[2,2,3,3,4],rare:true,relationships:{zhou:'关系未知'},schedule:[['station','waiting'],['observatory','waiting'],['park','resting'],['station','waiting'],['observatory','waiting'],['station','resting']]}
+  );
+  const laterCoats=['#aaa08a','#8d9a8e','#b5a58f','#b09b86','#92978a','#a89583','#9c9c87','#9b9a85'];residents.forEach((d,i)=>{d.laterCoat=laterCoats[i];});
+  const behaviors={idle:'看看四周',walking:'走在路上',working:'忙着手上的事',studying:'读书',shopping:'买些东西',eating:'吃点东西',resting:'歇一会儿',talking:'聊天',playing:'下棋',waiting:'发呆 / 看风景'};
+  const api={residents,behaviors};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.NPCData=api;
+})(globalThis);

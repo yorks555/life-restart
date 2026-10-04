@@ -6,7 +6,7 @@
   function tool(input,changeURL=true){
     const split=input.split('#'),target=nav.target(split[0].endsWith('.html')?split[0]:split[0]+'.html',split[1]?'#'+split[1]:'');if(!target)return;
     if(target.panel){panel(target.panel,changeURL);return;}
-    const name=target.tool,meta=nav.tools[name];$('toolDialog').dataset.tool=name;$('toolTitle').textContent=meta.title;$('toolSubtitle').textContent=meta.subtitle;$('toolPortrait').src=TownScene.thumbnail(meta.place);$('toolPortrait').alt=meta.title+'的像素建筑';frame.title=meta.title;
+    const name=target.tool,meta=nav.tools[name];$('toolDialog').dataset.tool=name;$('toolTitle').textContent=meta.title;$('toolSubtitle').textContent=meta.subtitle;$('toolPortrait').src=TownScene.thumbnail(meta.place);$('toolPortrait').alt=meta.title+'的小镇建筑';frame.title=meta.title;
     GameUI.open('toolDialog');if(loadedTool!==name){$('toolLoading').classList.remove('hidden');frame.src=name+'.html?embed=1';loadedTool=name;}if(changeURL)address(name);
   }
   frame.addEventListener('load',()=>$('toolLoading').classList.add('hidden'));
@@ -20,6 +20,7 @@
     const endings=LifeRogue.meta((Store.get('life_rogue_v1',{})||{}).meta).endings,chess=Gomoku.unlocked(Gomoku.stats((Store.get('gomoku_v1',{})||{}).stats));
     return [
       {id:'endings',name:'人生回声',items:LifeRogueData.endings.map(e=>({name:e.name,text:endings.includes(e.id)?e.text:'解锁：'+e.hint,owned:endings.includes(e.id),icon:e.id}))},
+      {id:'residents',name:'小镇人物',items:globalThis.ResidentUI?.entries()||[]},
       {id:'qian',name:'签文',items:QIAN.map((q,i)=>({name:'第 '+(i+1)+' 签 · '+q.level,text:indices('tujian_qian',QIAN.length).includes(i)?q.poem+'\n'+q.note:'去杂货铺摇一支签，收集新的签文。',owned:indices('tujian_qian',QIAN.length).includes(i),icon:'scroll',tool:'qian'}))},
       {id:'chess',name:'棋局',items:Gomoku.achievements.map(a=>({name:a.name,text:a.hint,owned:chess.includes(a.id),icon:'coin',tool:'gomoku'}))},
       {id:'zodiac',name:'生肖',items:zodiacNames.map((name,i)=>({name:name+'年',text:'在天文小屋排出这一生肖的生日，即可收集。',owned:nav.collectionIndices(Store.get('tujian_zodiac',[]),zodiacNames).includes(i),icon:'star',tool:'bazi'}))},
@@ -27,7 +28,7 @@
     ];
   }
   function atlas(){
-    const all=groups(),count=all.reduce((s,g)=>s+g.items.filter(x=>x.owned).length,0);$('atlasSummary').textContent='已收集 '+count+' / 44 · 所有旅途，收在同一本手记里。';$('atlasTabs').replaceChildren();
+    const all=groups(),count=all.reduce((s,g)=>s+g.items.filter(x=>x.owned).length,0);$('atlasSummary').textContent='已收集 '+count+' / '+all.reduce((sum,g)=>sum+g.items.length,0)+' · 所有旅途，收在同一本手记里。';$('atlasTabs').replaceChildren();
     all.forEach(g=>{const button=N('button',g.name+' '+g.items.filter(x=>x.owned).length+'/'+g.items.length);button.type='button';button.setAttribute('aria-pressed',String(g.id===atlasCategory));button.addEventListener('click',()=>{atlasCategory=g.id;atlas();});$('atlasTabs').append(button);});
     $('endings').classList.toggle('hidden',atlasCategory!=='endings');$('atlasGrid').classList.toggle('hidden',atlasCategory==='endings');$('atlasGrid').replaceChildren();
     for(const item of all.find(g=>g.id===atlasCategory).items){const card=N('div',undefined,'atlas-entry'+(item.owned?'':' locked')),heading=N('h3');heading.append(GameArt.icon(item.owned?item.icon:'lock'),N('span',item.name));card.append(heading,N('p',item.text));if(item.tool){const button=N('button','去'+nav.tools[item.tool].title,'text-button');button.addEventListener('click',()=>tool(item.tool));card.append(button);}$('atlasGrid').append(card);}

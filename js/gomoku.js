@@ -68,6 +68,7 @@
     if (game.over && mode === 'ai') {
       const before = Gomoku.unlocked(stats);
       stats = Gomoku.record(stats, game.winner, difficulty);
+      if(globalThis.parent&&parent!==window)parent.postMessage({type:'town:chess-result',moves:game.moves},location.origin);
       const added = Gomoku.achievements.filter(a => Gomoku.unlocked(stats).includes(a.id) && !before.includes(a.id));
       if (added.length) showToast('解锁：' + added.map(a => a.name).join('、'));
     }
